@@ -1016,27 +1016,6 @@ public String sayHello(){
 ```
 Printing inside methods, prints to the console and can used for debugging. You need to return values to use http protocols.  
 
-**Java Reflection**:  A feature that provides the opportunity to examine and direct the runtime behavior of applications running in the JVM.  
-It is used to obtain, control and manage information such as names and parameters of classes, methods, properties and annotations.  
-For the use of Reflection, it will be useful to know the Class, Method, Field, Annotation classes and methods in the java.lang package.  
-The Class class has methods such as getName, getSimpleName, getModifiers, getPackage, getSuperclass, getInterfaces, getConstructors, getMethods, getFields, getAnnotations to get information about the class.  
-When it is desired to run a method with a reflection structure, the invoke() method in the Method class can be used.  
-With the Reflection structure, it is also possible to access non-accessible areas such as private and protected in the class.  
-The most important use of the Java Reflection structure is the annotations structure because structures such as Spring, Hibernate, and JAXB (XML operations) operate using reflection and annotations.  
-
-The following method prints the annotations in the class given as a parameter:  
-```java
-public static void yazdir(Class<?> annotationClass) {
-    for (Annotation annotation : annotationClass.getAnnotations()) {
-        System.out.println(annotation.toString());
-    }
-}
-```
-
-By using the reflection structure, operations such as dynamically creating objects from the class, class loading, dependency management (DI) can be done easily.  
-However, unexpected results may occur when the reflection structure is not used appropriately.  
-
-
 **Java Persistence API(JPA)**: JPA is a collection of classes and methods powered by Oracle that permanently stores large amounts of data in a database.  
 JPA creates a bridge between the relational model (database model) and the object model (Java object) and the load is significantly reduced.  
 **JPA Repository**: A specific extension of Repository.  
@@ -1171,6 +1150,13 @@ public class AddressDto {
     private CountryDto country;
 }
 ```
+**Filling Dto's in Dao Example**  
+	
+```java
+@Query()
+CrdCreditCardStatementDto getCreditCardDetails(Long creditCardId);
+```
+
 **Converter**
 With these DTOs, we also perform the transformations between entities and dtos in our converter package.  
 Since the process of transforming each field is very repetitive, we create the mapper interface using the mapstruct package and these operations are done for us.  
