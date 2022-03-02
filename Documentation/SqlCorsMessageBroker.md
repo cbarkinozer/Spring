@@ -308,8 +308,8 @@ public class Recv {
 
 **TestRestTemplate**  
 
-**References**:
-https://www.geeksforgeeks.org/sql-ddl-dql-dml-dcl-tcl-commands/
+**References**:  
+https://www.geeksforgeeks.org/sql-ddl-dql-dml-dcl-tcl-commands/  
 https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS  
 https://martinfowler.com/articles/richardsonMaturityModel.html  
 https://www.baeldung.com/spring-boot-testresttemplate  
