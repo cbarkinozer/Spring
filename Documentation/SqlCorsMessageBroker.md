@@ -153,6 +153,13 @@ SET CONSTRAINT {constraint_name[, ...] | ALL} {DEFERRED | IMMEDIATE};
 
 SET CONSTRAINT ALL IMMEDIATE;
 ````
+**Adding a Database To Your Project**  
+Create the database in Postgresql(pgadmin), because hibernate cannot create it.  
+Add your database to the dependencies in pom.xml.  
+Update application.properties.  
+Make "ddl:jpa = update" after running one time with "ddl:jpa=create" otherwise Hibernate deletes table.  
+
+
 **Cross-Origin Resource Sharing (CORS)** 
 A web browser-managed mechanism that, using additional HTTP headers, provides access control of a web application running in one origin to a web application in a different origin.  
 ![image](https://user-images.githubusercontent.com/43732258/155185467-6eaf1641-f6fd-40e7-99a2-95b496280d6e.png)
@@ -304,7 +311,6 @@ public class Recv {
 }
 
 ```
-
 
 **TestRestTemplate**  
 
