@@ -1153,7 +1153,16 @@ public class AddressDto {
 **Filling Dto's in Dao Example**  
 	
 ```java
-@Query()
+@Query(
+	"select"+
+	"new com.softtech.springboot.app.crd.dto.CreditCardStatementDto"+
+	"cusCustomer.name"+
+	"cusCustomer.surname"+
+	")"+
+	"from CrdCreditCard crdCreditCard"+
+	"left join CusCustomer on crdCreditCard.cusCustomerId=cusCustomer.id"+
+	"where crdCreditCard.id=:creditCardId"
+)
 CrdCreditCardStatementDto getCreditCardDetails(Long creditCardId);
 ```
 
