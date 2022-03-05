@@ -20,3 +20,6 @@ dönen metotları yazınız. (getEvList, getVillaList vs).
 2. Nesneye yönelik programlamaya uygun tasarım yapınız.
 3. Clean code prensiplerine uyunuz.
 4. Main metot içinde tüm metotları konsola anlamlı şekilde yazdırınız. 
+
+### Note
+To check commits : https://github.com/165-Softtech-Patika-Java-Spring/case1-cbarkinozer  
