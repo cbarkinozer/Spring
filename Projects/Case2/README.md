@@ -33,6 +33,7 @@ Yani metot parametresi için dto, return için başka bir dto kullanmanıza gere
 
 ### Design:  
 Table Design Image:  https://ibb.co/Xs8S5Wc    
+To check commits: https://github.com/165-Softtech-Patika-Java-Spring/case2-cbarkinozer
 Note: plateCode renamed as cityCode.   
 Doors does not have name, they only have doorId.      
 In City, city Code is cities unique code. E.g 01 for Adana, 872 for chicago, 011 for delhi.  
