@@ -40,6 +40,7 @@ bir araştırma yapmanız gerekecek.   ✓
 # Notes  
 Database table design : https://ibb.co/wpbn6DF  
 All works on Swagger  
+To check commits : https://github.com/165-Softtech-Patika-Java-Spring/case3-cbarkinozer  
 
 # TODO
 Exceptions are not parameterized with fields and names.  
