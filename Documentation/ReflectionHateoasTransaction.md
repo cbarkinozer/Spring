@@ -1,4 +1,4 @@
-# Refleciton 
+# Reflection 
 
 A feature that provides the opportunity to examine and direct the runtime behavior of applications running in the JVM.  
 It is used to obtain, control and manage information such as names and parameters of classes, methods, properties and annotations.  
