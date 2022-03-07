@@ -158,6 +158,23 @@ HTTP/1.1 200 OK
 ```
 
 # Transaction  
+The transaction is a error safe operation block.  
+
+Transactions follow the ACID properties:  
+Atomicity: If all steps are successful commit, at least one error happens rollback (all or nothing).  
+Consistency: The results are consistent, results same everytime.    
+Isolation: Transactions should not be concurrent and affect each other at the same time.  
+Durability: Once the transaction happened, it stays happened.  
+
+In Spring declerative transactions are used (using predefined annotations).   
+Declarative programming is writing the code in a way that it describes what is wanted to do, and not how it is wanted to do.   
+Declarative transactions means separating transaction management from the business code.  
+
+**Transaction Annotations**
+
+
+**Real-life Examples**
+
 
 ## Spring Data Jpa Audit  
 Enabling auditing (of entities) with Spring Data Jpa’s @CreatedDate and @LastModified.  
