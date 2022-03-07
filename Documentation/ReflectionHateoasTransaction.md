@@ -1,7 +1,9 @@
 # Reflection 
 
 A feature that provides the opportunity to examine and direct the runtime behavior of applications running in the JVM.  
-It is used to obtain, control and manage information such as names and parameters of classes, methods, properties and annotations.  
+It is used to obtain, control and manage information such as names and parameters of classes, methods, properties and annotations. 
+You can call a class without creating an instance of that class with reflection.  
+And by using that call you can, create an instance, call methods, find superclasses and implemented interfaces, and access modifiers.  
 For the use of Reflection, it will be useful to know the Class, Method, Field, Annotation classes and methods in the java.lang package.  
 The Class class has methods such as getName, getSimpleName, getModifiers, getPackage, getSuperclass, getInterfaces, getConstructors, getMethods, getFields, getAnnotations to get information about the class.  
 When it is desired to run a method with a reflection structure, the invoke() method in the Method class can be used.  
@@ -20,6 +22,35 @@ public static void yazdir(Class<?> annotationClass) {
 By using the reflection structure, operations such as dynamically creating objects from the class, class loading, dependency management (DI) can be done easily.  
 However, unexpected results may occur when the reflection structure is not used appropriately.  
 
+Reflections are useful with code generators, generic structures.  
+
+**Converter example:**  
+```java
+public static void main(String[] args) {
+
+        Class clazzSource = AccAccount.class;
+        Class clazzTarget = AccAccountDto.class;
+
+        String simpleName = clazzTarget.getSimpleName(); //Gets class name
+        Method[] declaredMethods = clazzTarget.getDeclaredMethods(); //Gets declared methods addresses
+
+        System.out.println(simpleName + " target = new " + simpleName + "();");
+
+        for (Method eachMethod : declaredMethods) { //For each method in declaredMethod array
+            String name = eachMethod.getName(); //Get methods name
+
+            if (name.startsWith("set")){ //If method name starts with set
+
+                String getName = name.replace("set", "get"); //Replace set with get
+
+                System.out.println("target." + name + "(source." + getName + "());");
+            }
+        }
+        System.out.println("return target;");
+
+
+    }
+```
 
 # HATEOAS  
 HATEOAS stands for Hypermedia as the Engine of Application State.  
