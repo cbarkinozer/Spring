@@ -22,4 +22,72 @@ However, unexpected results may occur when the reflection structure is not used 
 
 
 # HATEOAS  
+HATEOAS stands for Hypermedia as the Engine of Application State.  
+3. level (Hypermedia control) of the Richardson Maturity Level.  
+With HATEOAS, clients can use a REST API with minimal documentation.  
+A good REST Api (has HATEOAS) often sends the list/links of other resources related to this resource, the action to be taken and the information that can be obtained.  
+Example:
+A request goes to accounts api.  
+
+```json
+GET /accounts/12345 HTTP/1.1
+Host: bank.example.com
+Accept: application/vnd.acme.account+json
+...
+```
+
+The response is the following.  
+
+```json
+HTTP/1.1 200 OK
+Content-Type: application/vnd.acme.account+json
+Content-Length: ...
+{
+    "account": {
+        "account_number": 12345,
+        "balance": {
+            "currency": "usd",
+            "value": 100.00
+        },
+        "links": {
+            "deposit": "/accounts/12345/deposit",
+            "withdraw": "/accounts/12345/withdraw",
+            "transfer": "/accounts/12345/transfer",
+            "close": "/accounts/12345/close"
+        }
+    }
+}
+```
+As you can see, links also return.  
+Rest api means, "you can do these operations" by sending these links.  
+
+After doing a operation that caused the account balance be negative.  
+Rest api returns only deposit link, not others.  
+As you can see there is a sort of programming happens here as well.  
+
+```json
+HTTP/1.1 200 OK
+ Content-Type: application/vnd.acme.account+json
+ Content-Length: …
+ {
+     "account": {
+         "account_number": 12345,
+         "balance": {
+             "currency": "usd",
+             "value": -25.00
+         },
+         "links": {
+             "deposit": "/accounts/12345/deposit"
+         }
+     }
+ }
+```
 # Transaction  
+
+## RESOURCES
+https://www.evrenbal.com/restapi-ve-hateoas-kavrami/  
+https://www.baeldung.com/transaction-configuration-with-jpa-and-spring  
+https://medium.com/@dururyener/transaction-y%C3%B6netimi-ve-spring-boot-transactional-kullan%C4%B1m%C4%B1-f894cc66c9d9  
+https://tugrulbayrak.medium.com/jwt-json-web-tokens-nedir-nasil-calisir-5ca6ebc1584a  
+https://rashidi.github.io/spring-boot-data-audit/  
+https://www.javainuse.com/spring/boot-transaction-propagation  
