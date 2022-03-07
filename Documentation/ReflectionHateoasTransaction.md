@@ -95,6 +95,10 @@ public ResponseEntity save(@RequestBody CusCustomerSaveRequestDto cusCustomerSav
     WebMvcLinkBuilder link = WebMvcLinkBuilder.linkTo(
                       WebMvcLinkBuilder.methodOn(
                       this.getClass()),findById(cusCustomerDto.getId()));
+    EntityModel entityModel = EntityModel.of(cusCustomerDto);
+    entityModel.add(link.withRel("find-by-id"));
+    MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(entityModel);
+    return ResponseEntity.ok(RestResponse.of(mappingJacksonValue));
 }
 ```
 ```json
