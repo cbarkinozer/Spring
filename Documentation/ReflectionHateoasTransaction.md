@@ -82,7 +82,91 @@ HTTP/1.1 200 OK
      }
  }
 ```
+**To implement HATEOAS to your controller:**  
+WebMvcLinkBuilder is used for the implementation.  
+Links that are coming from the WebMvcLinkBuilder are added with EntityModel.   
+The linked entity model is filled with MappingJacksonValue.  
+Returns mappedJacksonValue as ResponseEntity.  
+
 # Transaction  
+
+## Spring Data Jpa Audit  
+Enabling auditing (of entities) with Spring Data Jpa’s @CreatedDate and @LastModified.  
+Spring Data Jpa provides auditing feature which includes @CreateDate, @CreatedBy, @LastModifiedDate, and @LastModifiedBy.  
+These auditions are java level controls.  
+It keep track when an entry is created with created column and when it is modified with modified column.  
+
+It is a better practice to create AdditionalFields named class in general package.  
+```java
+@Embeddable
+@Getter
+@Setter
+public class BaseAdditionalFields {
+
+    @Column(name = "CREATE_DATE", updatable = false)
+    @CreatedDate
+    private Date createDate;
+
+    @Column(name = "UPDATE_DATE")
+    @LastModifiedDate
+    private Date updateDate;
+
+    @Column(name = "CREATED_BY")
+    @CreatedBy
+    private Long createdBy;
+
+    @Column(name = "UPDATED_BY")
+    @LastModifiedBy
+    private Long updatedBy;
+}
+```
+In general package, BaseEntityService add the following method:  
+```java
+   private void setAdditionalFields(E entity) {
+
+        BaseAdditionalFields baseAdditionalFields = entity.getBaseAdditionalFields();
+
+        Long currentCustomerId = getCurrentCustomerId();
+
+        if (baseAdditionalFields == null){
+            baseAdditionalFields = new BaseAdditionalFields();
+            entity.setBaseAdditionalFields(baseAdditionalFields);
+        }
+
+        if (entity.getId() == null){
+            baseAdditionalFields.setCreateDate(new Date());
+            baseAdditionalFields.setCreatedBy(currentCustomerId);
+        }
+
+        baseAdditionalFields.setUpdateDate(new Date());
+        baseAdditionalFields.setUpdatedBy(currentCustomerId);
+    }
+```
+Finally, in entity service of every package you can add the additional fields by setters, and save the rest.  
+```java
+public AccAccountDto save(AccAccountSaveRequestDto accAccountSaveRequestDto) {
+
+        String ibanNo = getIbanNo();
+        Long currentCustomerId = accAccountEntityService.getCurrentCustomerId();
+
+        //Converting dto to entity
+        AccAccount accAccount = AccAccountMapper.INSTANCE.convertToAccAccount(accAccountSaveRequestDto);
+        
+        //Setting additional fields
+        accAccount.setStatusType(GenStatusType.ACTIVE);
+        accAccount.setIbanNo(ibanNo);
+        accAccount.setCusCustomerId(currentCustomerId);
+
+        //Saving other fields
+        accAccount = accAccountEntityService.save(accAccount);
+
+        //Converting back to dto
+        AccAccountDto accAccountDto = AccAccountMapper.INSTANCE.convertToAccAccountDto(accAccount);
+
+        return accAccountDto;
+    }
+
+```
 
 ## RESOURCES
 https://www.evrenbal.com/restapi-ve-hateoas-kavrami/  
@@ -91,3 +175,4 @@ https://medium.com/@dururyener/transaction-y%C3%B6netimi-ve-spring-boot-transact
 https://tugrulbayrak.medium.com/jwt-json-web-tokens-nedir-nasil-calisir-5ca6ebc1584a  
 https://rashidi.github.io/spring-boot-data-audit/  
 https://www.javainuse.com/spring/boot-transaction-propagation  
+https://rashidi.github.io/spring-boot-data-audit/  
