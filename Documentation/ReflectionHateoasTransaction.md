@@ -88,6 +88,40 @@ Links that are coming from the WebMvcLinkBuilder are added with EntityModel.
 The linked entity model is filled with MappingJacksonValue.  
 Returns mappedJacksonValue as ResponseEntity.  
 
+```java
+@PostMapping
+public ResponseEntity save(@RequestBody CusCustomerSaveRequestDto cusCustomerSaveRequestDto){
+    CusCustomerDto cusCustomerDto = cusCustomerService.save(cusCustomerSaveRequestDto);
+    WebMvcLinkBuilder link = WebMvcLinkBuilder.linkTo(
+                      WebMvcLinkBuilder.methodOn(
+                      this.getClass()),findById(cusCustomerDto.getId()));
+}
+```
+```json
+HTTP/1.1 200 OK
+ Content-Type: application/vnd.acme.account+json
+ Content-Length: …
+ {
+    "data":{
+     "value": {
+         "id": 52,
+         "name": "Yusuf",
+         "surname": "Memiş",
+         "identityNo": 12345678901,
+         "links": [
+         {
+             "rel":"find by id",
+             "href": "http://localhost:8080/api/v1/customer/52"
+         }
+       ]
+     },
+     "responseDate":"2022-02-27T06:26:48,136+00:00",
+     "messages":null,
+     "success":true
+   }
+ }
+```
+
 # Transaction  
 
 ## Spring Data Jpa Audit  
@@ -176,3 +210,4 @@ https://tugrulbayrak.medium.com/jwt-json-web-tokens-nedir-nasil-calisir-5ca6ebc1
 https://rashidi.github.io/spring-boot-data-audit/  
 https://www.javainuse.com/spring/boot-transaction-propagation  
 https://rashidi.github.io/spring-boot-data-audit/  
+https://glowing-crest-6d5.notion.site/Softtech-Java-Spring-Bootcamp-191efcce77654cd493643314176e4957  
