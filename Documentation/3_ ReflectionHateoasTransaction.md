@@ -239,18 +239,65 @@ public AccAccountDto save(AccAccountSaveRequestDto accAccountSaveRequestDto) {
 The transaction is a error safe operation block.  
 
 Transactions follow the ACID properties:  
-Atomicity: If all steps are successful commit, at least one error happens rollback (all or nothing).  
-Consistency: The results are consistent, results same everytime.    
-Isolation: Transactions should not be concurrent and affect each other at the same time.  
-Durability: Once the transaction happened, it stays happened.  
+**Atomicity**: If all steps are successful commit, at least one error happens rollback (all or nothing).  
+**Consistency**: The results are consistent, results same everytime.    
+**Isolation**: Transactions should not be concurrent and affect each other at the same time.  
+**Durability**: Once the transaction happened, it stays happened.  
 
 In Spring declerative transactions are used (using predefined annotations).   
 Declarative programming is writing the code in a way that it describes what is wanted to do, and not how it is wanted to do.   
 Declarative transactions means separating transaction management from the business code.  
 
 **Transaction Annotations**  
+**@Transactional**: We can use @Transactional to wrap a method in a database transaction.  
+It allows us to set propagation, isolation, timeout, read-only, and rollback conditions for our transaction. We can also specify the transaction manager.  
+
+Spring creates a proxy, or manipulates the class byte-code, to manage the creation, commit, and rollback of the transaction.  
+If we have a method named callMethod marked as @Transactional, Spring will wrap some transaction management code around the invocation.  
+```java
+createTransactionIfNecessary();
+try {
+    callMethod();
+    commitTransactionAfterReturning();
+} catch (exception) {
+    completeTransactionAfterThrowing();
+    throw exception;
+}
+```
+Spring applies the class-level annotation to all public methods of this class that we did not annotate with @Transactional.  
+However, if we put the annotation on a private or protected method, Spring will ignore it without an error.  
+We can put the @Transactional on definitions of interfaces, classes, or directly on methods.  
+Putting on interfaces is not suggested but acceptable in case of Repository (because Repository has to be an interface).  
+
+
+Circular Dependency might occur when NonTransactionalService and TransactionalService get injected to each other.   
 
 **Circular Dependency**  
+A circular dependency occurs when two classes depend on each other.  
+
+To solve circular dependency in that situation:  
+```java
+class TransactionalService{
+	private final NonTransactionalService nonTransactionalService;
+	...	
+}
+class NonTransactionalService{
+	private final TransactionalService transactionalService;	
+	@Autowired
+	setTransactionalService(@Lazy TransactionalService tService){
+		this.transactionalService = tService;
+	}
+	...
+}
+```
+
+
+
+
+**@REQUIRED**
+@Required is the default propagation for @Transactional classes.  
+
+
 
 **Real-life Examples**  
 
@@ -267,3 +314,4 @@ https://rashidi.github.io/spring-boot-data-audit/
 https://www.javainuse.com/spring/boot-transaction-propagation  
 https://rashidi.github.io/spring-boot-data-audit/  
 https://glowing-crest-6d5.notion.site/Softtech-Java-Spring-Bootcamp-191efcce77654cd493643314176e4957  
+https://www.baeldung.com/spring-transactional-propagation-isolation  
