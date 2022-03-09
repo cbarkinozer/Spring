@@ -157,25 +157,6 @@ HTTP/1.1 200 OK
  }
 ```
 
-# Transaction  
-The transaction is a error safe operation block.  
-
-Transactions follow the ACID properties:  
-Atomicity: If all steps are successful commit, at least one error happens rollback (all or nothing).  
-Consistency: The results are consistent, results same everytime.    
-Isolation: Transactions should not be concurrent and affect each other at the same time.  
-Durability: Once the transaction happened, it stays happened.  
-
-In Spring declerative transactions are used (using predefined annotations).   
-Declarative programming is writing the code in a way that it describes what is wanted to do, and not how it is wanted to do.   
-Declarative transactions means separating transaction management from the business code.  
-
-**Transaction Annotations**
-
-
-**Real-life Examples**
-
-
 ## Spring Data Jpa Audit  
 Enabling auditing (of entities) with Spring Data Jpa’s @CreatedDate and @LastModified.  
 Spring Data Jpa provides auditing feature which includes @CreateDate, @CreatedBy, @LastModifiedDate, and @LastModifiedBy.  
@@ -254,11 +235,34 @@ public AccAccountDto save(AccAccountSaveRequestDto accAccountSaveRequestDto) {
 
 ```
 
+# Transactions   
+The transaction is a error safe operation block.  
+
+Transactions follow the ACID properties:  
+Atomicity: If all steps are successful commit, at least one error happens rollback (all or nothing).  
+Consistency: The results are consistent, results same everytime.    
+Isolation: Transactions should not be concurrent and affect each other at the same time.  
+Durability: Once the transaction happened, it stays happened.  
+
+In Spring declerative transactions are used (using predefined annotations).   
+Declarative programming is writing the code in a way that it describes what is wanted to do, and not how it is wanted to do.   
+Declarative transactions means separating transaction management from the business code.  
+
+**Transaction Annotations**  
+
+**Circular Dependency**  
+
+**Real-life Examples**  
+
+
+
+
+
+
 ## RESOURCES
 https://www.evrenbal.com/restapi-ve-hateoas-kavrami/  
 https://www.baeldung.com/transaction-configuration-with-jpa-and-spring  
 https://medium.com/@dururyener/transaction-y%C3%B6netimi-ve-spring-boot-transactional-kullan%C4%B1m%C4%B1-f894cc66c9d9  
-https://tugrulbayrak.medium.com/jwt-json-web-tokens-nedir-nasil-calisir-5ca6ebc1584a  
 https://rashidi.github.io/spring-boot-data-audit/  
 https://www.javainuse.com/spring/boot-transaction-propagation  
 https://rashidi.github.io/spring-boot-data-audit/  
