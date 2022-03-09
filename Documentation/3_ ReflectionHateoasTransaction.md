@@ -299,37 +299,47 @@ Otherwise, the business logic appends to the currently active transaction.
 Even the Service layer is non-transactional, Database methods in JPARepository are Transactional.  
 When operation is done in Transactional layer, changes gets committed.  
 
-If non-transactional -> tranctional, Else if transactional -> transactional.   
+If transactional -> transactional, non-transactional -> tranctional.   
+
+Used in Repository-like services.  
 
 **@Transactional(propagation = Propagation.SUPPORTS)**
 Spring first checks if an active transaction exists.  
 If a transaction exists, then the existing transaction will be used.  
 If there isn't a transaction, it is executed non-transactional.  
 
-If non-transactional -> non-transactional , Else if transactional -> transactional.
+If transactional -> transactional, non-transactional -> non-transactional.  
+
+Used to imitate the caller's context, if your caller was running in transaction, then you run in too.  
 
 **@Transactional(propagation = Propagation.MANDATORY)**  
 if there is an active transaction, then it will be used.  
 If there isn't an active transaction, then Spring throws an exception.   
 
+If transactional -> transactional, if non-transactional -> exception.  
 
-If non-transactional -> exception , Else if transactional -> transactional.  
+Used to continue the caller's transactional operation, continue to the transaction else throw exception.  
 
 **@Transactional(propagation = Propagation.NEVER)**  
 Spring throws an exception if there's an active transaction.  
 
+If  transactional -> exception, non-transactional -> non-transactional.  
 
-If non-transactional -> non-transactional , Else if transactional -> exception.  
+Used to be sure that no transaction exists at all, if a transaction reaches throw exception.    
 
 **@Transactional(propagation = Propagation.NOT_SUPPORTED)**  
 If a current transaction exists, first Spring suspends it, and then the business logic is executed without a transaction.   
 
-If non-transactional -> non-transactional , Else if transactional -> non-transactional.  
+If transactional -> non-transactional, non-transactional -> non-transactional.  
+
+A weaker version of the never. If transactional reaches, suspend and continue non-transactional.  
 
 **@Transactional(propagation = Propagation.REQUIRES_NEW)**  
 Spring suspends the current transaction if it exists, and then creates a new one.   
 
-If non-transactional -> transactional , Else if transactional -> transactional with new transaction.  
+If transactional -> transactional with new transaction, non-transactional -> transactional.    
+
+Used when the code's flow somehow changes and you want to split your logic into multiple transactions.  
 
 **@Transactional(propagation = Propagation.NESTED)**  
 For NESTED propagation, Spring checks if a transaction exists, and if so, it marks a save point.    
@@ -338,11 +348,7 @@ If there's no active transaction, it works like REQUIRED.
 
 *The "Nested" is only supported for JDBC operations.*    
 
-**Real-life Examples**  
-
-
-
-
+Used to create nested transactions.  
 
 
 ## RESOURCES
