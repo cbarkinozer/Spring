@@ -172,22 +172,26 @@ These introduce resources, http verbs, and hypermedia controls.
 **Level 0**  
 Using HTTP as a transport system for remote interactions.  
 Basically using HTTP as a tunneling mechanism for your own remote interaction mechanism, usually based on Remote Procedure Invocation.  
+Using only Post requests to a single endpoint for all operations.  
 ![image](https://user-images.githubusercontent.com/43732258/155319917-689bdfb6-f1c7-440f-ad18-9b9bf2fedc44.png)  
 
 **Level 1 - Resources**  
 Rather than making all our requests to a singular service endpoint, we start talking to individual resources.  
 Tackles the question of handling complexity by using divide and conquer, breaking a large service endpoint down into multiple resources.  
+Using only Post requests to different post endpoints for all operations.  
 ![image](https://user-images.githubusercontent.com/43732258/155320095-14ce3b15-46aa-4917-b589-ae1159378524.png)  
 
 **Level 2 - HTTP Verbs**  
 Using the HTTP verbs as closely as possible to how they are used in HTTP itself.  
 Introduces a standard set of verbs so that we handle similar situations in the same way, removing unnecessary variation.  
+Using all sorts of rest requests to their request type endpoints.    
 ![image](https://user-images.githubusercontent.com/43732258/155320297-9391278b-fe51-4751-b2ff-9239ebd9b86c.png)  
 
 **Level 3 - Hypermedia Controls**  
 The final level introduces HATEOAS (Hypertext As The Engine Of Application State).  
 HATEOAS addresses the question of how to get from a list open slots to knowing what to do to book an appointment.  
 Introduces discoverability, providing a way of making a protocol more self-documenting.  
+Using all sorts of rest requests to their request type endpoints and also returning other endpoint's links (HATEOAS).  
 ![image](https://user-images.githubusercontent.com/43732258/155320558-4cd3318c-8650-44d7-8421-31536541c5f7.png)
 
 **Message Queue**  
