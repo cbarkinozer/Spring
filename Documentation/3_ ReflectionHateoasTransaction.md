@@ -51,6 +51,8 @@ public static void main(String[] args) {
 
     }
 ```
+WARNING: There are many downsides of using reflection (harder to understand, inaccessible to static analysis,not type-checked by the compiler, unavailable for optimization,slow in general, anti-encapsulation).   
+Avoid using it as much as possible. Frameworks use it because they have to and it might be useful if you are using generics to get type etc.   
 
 # HATEOAS  
 HATEOAS stands for Hypermedia as the Engine of Application State.  
