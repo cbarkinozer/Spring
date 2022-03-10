@@ -122,14 +122,22 @@ Returns mappedJacksonValue as ResponseEntity.
 ```java
 @PostMapping
 public ResponseEntity save(@RequestBody CusCustomerSaveRequestDto cusCustomerSaveRequestDto){
+    
     CusCustomerDto cusCustomerDto = cusCustomerService.save(cusCustomerSaveRequestDto);
+    
     WebMvcLinkBuilder link = WebMvcLinkBuilder.linkTo(
-                      WebMvcLinkBuilder.methodOn(
-                      this.getClass()),findById(cusCustomerDto.getId()));
-    EntityModel entityModel = EntityModel.of(cusCustomerDto);
-    entityModel.add(link.withRel("find-by-id"));
-    MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(entityModel);
+    		WebMvcLinkBuilder.methodOn(this.getClass())
+		.findById(cusCustomerDto.getId()) );
+    
+    EntityModel entityModel = EntityModel.of(cusCustomerDto); //A simple EntityModel wrapping a domain object and adding links to it.
+    
+    entityModel.add(link.withRel("find-by-id")); //Explaining the link.
+    
+    MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(entityModel); 
+    //A simple holder for the POJO to serialize  with further serialization instructions to be passed in to the converter.
+    
     return ResponseEntity.ok(RestResponse.of(mappingJacksonValue));
+
 }
 ```
 ```json
