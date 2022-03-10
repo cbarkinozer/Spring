@@ -47,7 +47,7 @@ The user must periodically request new tokens when their token expire.
 The received token is usually kept in localStorages on the client to be sent in subsequent requests.  
 When the user wants to access a resource that requires authorization, one should send the JWT in the header as follows.  
 
-**Authorization: "Bearer <token>"**  
+**Authorization: "Bearer the-token"**  
 
 
 **Implementation**    
