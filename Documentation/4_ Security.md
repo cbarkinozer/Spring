@@ -209,6 +209,113 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 }
 ```
 In service:
+
+
+There is a interface called UserDetails for creating user based security.  
+Create a class (JwtUserDetails) and implement UserDetails and override it's methods.  
+We will mostly use authority, username, password, user's id.  
+Add id,username,password fields (depends on your User class).  
+Implement a create method that initiates fields.  
+Making the constructor private, blocks access to the constructor.  
+
+
+In JwtUserDetails:
+```java
+public class JwtUserDetails implements UserDetails {
+
+    private Long id;
+    private String username;
+    private String password;
+    private Collection<? extends GrantedAuthority> authorities;
+
+    private JwtUserDetails(Long id, String username, String password, Collection<? extends GrantedAuthority> authorities) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.authorities = authorities;
+    }
+
+    public static JwtUserDetails create(CusCustomer cusCustomer){
+
+        Long id = cusCustomer.getId();
+        String username = cusCustomer.getIdentityNo().toString();
+        String password = cusCustomer.getPassword();
+
+        List<GrantedAuthority> grantedAuthorityList = new ArrayList<>();
+        grantedAuthorityList.add(new SimpleGrantedAuthority("user"));
+
+        return new JwtUserDetails(id, username, password, grantedAuthorityList);
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    public Long getId() {
+        return id;
+    }
+}
+```
+
+
+In JwtUserDetailsService:
+```java
+@Service
+@RequiredArgsConstructor
+public class JwtUserDetailsService implements UserDetailsService {
+
+    private final CusCustomerEntityService cusCustomerEntityService;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        Long identityNo = Long.valueOf(username);
+
+        CusCustomer cusCustomer = cusCustomerEntityService.findByIdentityNo(identityNo);
+
+        return JwtUserDetails.create(cusCustomer);
+    }
+
+    public UserDetails loadUserByUserId(Long id) {
+
+        CusCustomer cusCustomer = cusCustomerEntityService.getByIdWithControl(id);
+
+        return JwtUserDetails.create(cusCustomer);
+    }
+}
+```
+
 ```java
 @Service
 @RequiredArgsConstructor
@@ -279,100 +386,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
-    }
-}
-```
-In JwtUserDetailsService:
-```java
-@Service
-@RequiredArgsConstructor
-public class JwtUserDetailsService implements UserDetailsService {
-
-    private final CusCustomerEntityService cusCustomerEntityService;
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-        Long identityNo = Long.valueOf(username);
-
-        CusCustomer cusCustomer = cusCustomerEntityService.findByIdentityNo(identityNo);
-
-        return JwtUserDetails.create(cusCustomer);
-    }
-
-    public UserDetails loadUserByUserId(Long id) {
-
-        CusCustomer cusCustomer = cusCustomerEntityService.getByIdWithControl(id);
-
-        return JwtUserDetails.create(cusCustomer);
-    }
-}
-```
-In JwtUserDetails:
-```java
-public class JwtUserDetails implements UserDetails {
-
-    private Long id;
-    private String username;
-    private String password;
-    private Collection<? extends GrantedAuthority> authorities;
-
-    private JwtUserDetails(Long id, String username, String password, Collection<? extends GrantedAuthority> authorities) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.authorities = authorities;
-    }
-
-    public static JwtUserDetails create(CusCustomer cusCustomer){
-
-        Long id = cusCustomer.getId();
-        String username = cusCustomer.getIdentityNo().toString();
-        String password = cusCustomer.getPassword();
-
-        List<GrantedAuthority> grantedAuthorityList = new ArrayList<>();
-        grantedAuthorityList.add(new SimpleGrantedAuthority("user"));
-
-        return new JwtUserDetails(id, username, password, grantedAuthorityList);
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
-    public Long getId() {
-        return id;
     }
 }
 ```
