@@ -50,7 +50,8 @@ When the user wants to access a resource that requires authorization, one should
 **Authorization: "Bearer the-token"**  
 
 
-**Implementation**    
+## Implementation  
+
 Add following to pom.xml:   
 
 ```xml
@@ -68,8 +69,7 @@ Add following to pom.xml:
 
 Create a package called sec and inside security, config, controller, dto, enums, security, service.  
 
-
-In service:
+In security package:
 
 There is a interface called UserDetails for creating user based security.  
 Create a class (JwtUserDetails) and implement UserDetails and override it's methods.  
@@ -147,6 +147,10 @@ public class JwtUserDetails implements UserDetails {
     }
 }
 ```
+
+
+In service:  
+
 Create a class (JwtUserDetailsService) and implement UserDetailsService to create a service and override it's methods.  
 In this class we handle loading user by username and id.    
 In methods we find customers by id and create them.  
@@ -259,70 +263,6 @@ public class JwtTokenGenerator {
 }
 ```
 
-
-
-```java
-@Service
-@RequiredArgsConstructor
-public class AuthenticationService {
-
-    private final CusCustomerService cusCustomerService;
-    private final CusCustomerEntityService cusCustomerEntityService;
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenGenerator jwtTokenGenerator;
-
-    public CusCustomerDto register(CusCustomerSaveRequestDto cusCustomerSaveRequestDto) {
-
-        CusCustomerDto cusCustomerDto = cusCustomerService.save(cusCustomerSaveRequestDto);
-
-        return cusCustomerDto;
-    }
-
-    public String login(SecLoginRequestDto secLoginRequestDto) {
-
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(secLoginRequestDto.getIdentityNo().toString(), secLoginRequestDto.getPassword());
-        Authentication authentication = authenticationManager.authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String token = jwtTokenGenerator.generateJwtToken(authentication);
-
-        String bearer = EnumJwtConstant.BEARER.getConstant();
-
-        return bearer + token;
-    }
-
-    public CusCustomer getCurrentCustomer() {
-
-        JwtUserDetails jwtUserDetails = getCurrentJwtUserDetails();
-
-        CusCustomer cusCustomer = null;
-        if (jwtUserDetails != null){
-            cusCustomer = cusCustomerEntityService.getByIdWithControl(jwtUserDetails.getId());
-        }
-
-        return cusCustomer;
-    }
-
-    public Long getCurrentCustomerId(){
-
-        JwtUserDetails jwtUserDetails = getCurrentJwtUserDetails();
-        return jwtUserDetails.getId();
-    }
-
-    private JwtUserDetails getCurrentJwtUserDetails() {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        JwtUserDetails jwtUserDetails = null;
-        if (authentication != null && authentication.getPrincipal() instanceof JwtUserDetails){
-            jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
-        }
-        return jwtUserDetails;
-    }
-}
-```
-In security package, there are 5 files:  
-
 OncePerRequestFilter is a special type of filter for authentication in Spring.  
 A Filter can be called either before or after servlet execution.  
 Java servlets are Java classes that are designed to respond to HTTP requests in the context of a Web application.  
@@ -387,6 +327,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 }
 ```
 
+
+
+
+AuthenticationEntryPoint shows which error code to send in unauthorized transactions.  
+
 In JwtAuthenticationEntryPoint:	
 ```java
 @Component
@@ -401,71 +346,13 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
 
 
+To enable HTTP Security in Spring, we need to extend the WebSecurityConfigurerAdapter to provide a default configuration in the configure(HttpSecurity http) method.  
 
-Create a controller for login and register operations:
-```java
-@RestController
-@RequestMapping("/auth")
-@RequiredArgsConstructor
-public class AuthenticationController {
-
-    private final AuthenticationService authenticationService;
-
-    @Operation(tags = "Authentication Controller")
-    @PostMapping("/login")
-    public ResponseEntity login(@RequestBody SecLoginRequestDto secLoginRequestDto){
-
-        String token = authenticationService.login(secLoginRequestDto);
-        return ResponseEntity.ok(RestResponse.of(token));
-    }
-
-    @Operation(tags = "Authentication Controller")
-    @PostMapping("/register")
-    public ResponseEntity register(@RequestBody CusCustomerSaveRequestDto cusCustomerSaveRequestDto){
-
-        CusCustomerDto cusCustomerDto =authenticationService.register(cusCustomerSaveRequestDto);
-        return ResponseEntity.ok(RestResponse.of(cusCustomerDto));
-    }
-}
-```
-
-In dto:
-```java
-@Data
-public class SecLoginRequestDto {
-
-    private Long identityNo;
-    private String password;
-}
-```
-
-In  enums:
-```java
-public enum EnumJwtConstant {
-
-    BEARER("Bearer ") //All tokens include "Bearer " at their beginning
-    ;
-
-    private String constant;
-    EnumJwtConstant(String constant) {
-        this.constant = constant;
-    }
-
-    public String getConstant() {
-        return constant;
-    }
-
-    @Override
-    public String toString() {
-        return constant;
-    }
-
-```
 
 In config:
 ```java
-@Configuration
-@EnableWebSecurity
+@Configuration //Because we have @Beans inside this class
+@EnableWebSecurity //To get WebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -542,6 +429,139 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 }
 ```
+
+
+
+
+
+
+
+
+
+```java
+@Service
+@RequiredArgsConstructor
+public class AuthenticationService {
+
+    private final CusCustomerService cusCustomerService;
+    private final CusCustomerEntityService cusCustomerEntityService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenGenerator jwtTokenGenerator;
+
+    public CusCustomerDto register(CusCustomerSaveRequestDto cusCustomerSaveRequestDto) {
+
+        CusCustomerDto cusCustomerDto = cusCustomerService.save(cusCustomerSaveRequestDto);
+
+        return cusCustomerDto;
+    }
+
+    public String login(SecLoginRequestDto secLoginRequestDto) {
+
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(secLoginRequestDto.getIdentityNo().toString(), secLoginRequestDto.getPassword());
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String token = jwtTokenGenerator.generateJwtToken(authentication);
+
+        String bearer = EnumJwtConstant.BEARER.getConstant();
+
+        return bearer + token;
+    }
+
+    public CusCustomer getCurrentCustomer() {
+
+        JwtUserDetails jwtUserDetails = getCurrentJwtUserDetails();
+
+        CusCustomer cusCustomer = null;
+        if (jwtUserDetails != null){
+            cusCustomer = cusCustomerEntityService.getByIdWithControl(jwtUserDetails.getId());
+        }
+
+        return cusCustomer;
+    }
+
+    public Long getCurrentCustomerId(){
+
+        JwtUserDetails jwtUserDetails = getCurrentJwtUserDetails();
+        return jwtUserDetails.getId();
+    }
+
+    private JwtUserDetails getCurrentJwtUserDetails() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        JwtUserDetails jwtUserDetails = null;
+        if (authentication != null && authentication.getPrincipal() instanceof JwtUserDetails){
+            jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
+        }
+        return jwtUserDetails;
+    }
+}
+```
+
+
+
+
+Create a controller for login and register operations:
+```java
+@RestController
+@RequestMapping("/auth")
+@RequiredArgsConstructor
+public class AuthenticationController {
+
+    private final AuthenticationService authenticationService;
+
+    @Operation(tags = "Authentication Controller")
+    @PostMapping("/login")
+    public ResponseEntity login(@RequestBody SecLoginRequestDto secLoginRequestDto){
+
+        String token = authenticationService.login(secLoginRequestDto);
+        return ResponseEntity.ok(RestResponse.of(token));
+    }
+
+    @Operation(tags = "Authentication Controller")
+    @PostMapping("/register")
+    public ResponseEntity register(@RequestBody CusCustomerSaveRequestDto cusCustomerSaveRequestDto){
+
+        CusCustomerDto cusCustomerDto =authenticationService.register(cusCustomerSaveRequestDto);
+        return ResponseEntity.ok(RestResponse.of(cusCustomerDto));
+    }
+}
+```
+
+In dto:
+```java
+@Data
+public class SecLoginRequestDto {
+
+    private Long identityNo;
+    private String password;
+}
+```
+
+In  enums:
+```java
+public enum EnumJwtConstant {
+
+    BEARER("Bearer ") //All tokens include "Bearer " at their beginning
+    ;
+
+    private String constant;
+    EnumJwtConstant(String constant) {
+        this.constant = constant;
+    }
+
+    public String getConstant() {
+        return constant;
+    }
+
+    @Override
+    public String toString() {
+        return constant;
+    }
+
+```
+
 
 ## References
 https://tugrulbayrak.medium.com/jwt-json-web-tokens-nedir-nasil-calisir-5ca6ebc1584a    
