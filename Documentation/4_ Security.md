@@ -323,18 +323,13 @@ public class AuthenticationService {
 ```
 In security package, there are 5 files:  
 
-In JwtAuthenticationEntryPoint:	
-```java
-@Component
-public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+OncePerRequestFilter is a special type of filter for authentication in Spring.  
+A Filter can be called either before or after servlet execution.  
+Java servlets are Java classes that are designed to respond to HTTP requests in the context of a Web application.  
 
-    @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
-    }
-}
-```
-
+When a request goes through the filter chain, we might want some of the authentication actions to happen only once for the request.  
+We can extend the OncePerRequestFilter in such situations.  
+We are controlling if the encoded token is valid.  
 
 In JwtAuthenticationFilter:
 ```java
@@ -363,11 +358,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UserDetails userDetails = jwtUserDetailsService.loadUserByUserId(userId);
 
                 if (userDetails != null){
+		
+		    //Followings are fix
 
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken); //Checks if that token (even everything is valid) was born in the generator
                 }
             }
         }
@@ -376,20 +373,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String getToken(HttpServletRequest request) {
-        String fullToken = request.getHeader("Authorization");
-
+        String fullToken = request.getHeader("Authorization");  //Get token from Authorization topic inside the HTTP Responde's header
         String token = null;
         if (StringUtils.hasText(fullToken)){
-            String bearer = EnumJwtConstant.BEARER.getConstant();
+            String bearer = EnumJwtConstant.BEARER.getConstant(); //"bearer " saved as enum
 
-            if (fullToken.startsWith(bearer)){
-                token = fullToken.substring(bearer.length());
+            if (fullToken.startsWith(bearer)){ //Check if it starts with bearer
+                token = fullToken.substring(bearer.length()); //Get token from full token index 7 to end
             }
         }
         return token;
     }
 }
 ```
+
+In JwtAuthenticationEntryPoint:	
+```java
+@Component
+public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+
+    @Override
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
+    }
+}
+```
+
+
+
 
 Create a controller for login and register operations:
 ```java
@@ -537,3 +548,4 @@ https://tugrulbayrak.medium.com/jwt-json-web-tokens-nedir-nasil-calisir-5ca6ebc1
 https://medium.com/kodluyoruz/json-web-token-jwt-authentication-b5e6675a6e19  
 https://jwt.io/introduction/  
 https://github.com/sbahadirm/softtech-spring-boot/tree/master/src/main/java/com/softtech/softtechspringboot/app/sec  
+https://www.baeldung.com/spring-onceperrequestfilter  
