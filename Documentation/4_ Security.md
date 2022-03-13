@@ -71,7 +71,6 @@ Create a package called sec and inside security, config, controller, dto, enums,
 
 In service:
 
-
 There is a interface called UserDetails for creating user based security.  
 Create a class (JwtUserDetails) and implement UserDetails and override it's methods.  
 We will mostly use authority, username, password, user's id.  
