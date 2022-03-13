@@ -68,6 +68,330 @@ Add following to pom.xml:
 
 Create a package called sec and inside security, config, controller, dto, enums, security, service.  
 
+
+In service:
+
+
+There is a interface called UserDetails for creating user based security.  
+Create a class (JwtUserDetails) and implement UserDetails and override it's methods.  
+We will mostly use authority, username, password, user's id.  
+Add id,username,password fields (depends on your User class).  
+Implement a create method that initiates fields.  
+Making the constructor private, blocks access to the constructor.  
+
+
+In JwtUserDetails:
+```java
+public class JwtUserDetails implements UserDetails {
+
+    private Long id;
+    private String username;
+    private String password;
+    private Collection<? extends GrantedAuthority> authorities;
+
+    private JwtUserDetails(Long id, String username, String password, Collection<? extends GrantedAuthority> authorities) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.authorities = authorities;
+    }
+
+    public static JwtUserDetails create(CusCustomer cusCustomer){
+
+        Long id = cusCustomer.getId();
+        String username = cusCustomer.getIdentityNo().toString();
+        String password = cusCustomer.getPassword();
+
+        List<GrantedAuthority> grantedAuthorityList = new ArrayList<>();
+        grantedAuthorityList.add(new SimpleGrantedAuthority("user"));
+
+        return new JwtUserDetails(id, username, password, grantedAuthorityList);
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    public Long getId() {
+        return id;
+    }
+}
+```
+Create a class (JwtUserDetailsService) and implement UserDetailsService to create a service and override it's methods.  
+In this class we handle loading user by username and id.    
+In methods we find customers by id and create them.  
+
+
+In JwtUserDetailsService:
+```java
+@Service
+@RequiredArgsConstructor
+public class JwtUserDetailsService implements UserDetailsService {
+
+    private final CusCustomerEntityService cusCustomerEntityService;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        Long identityNo = Long.valueOf(username);
+
+        CusCustomer cusCustomer = cusCustomerEntityService.findByIdentityNo(identityNo);
+
+        return JwtUserDetails.create(cusCustomer);
+    }
+
+    public UserDetails loadUserByUserId(Long id) {
+
+        CusCustomer cusCustomer = cusCustomerEntityService.getByIdWithControl(id);
+
+        return JwtUserDetails.create(cusCustomer);
+    }
+}
+```
+
+To create token we need 2 things, Application key and expire time.  
+Application key can be stored in applicaiton.properties file.  
+Expire time unit is miliseconds 1 day = 86.400 ms.  
+Than in generateJwtToken method, we define principal(JwtUserDetails),
+and expire date by adding expire time on creating date.  
+Than a token will be created with builder pattern.  
+In builder we set subject(an id), issuedAt(creation date), expiration(expire date), signWith(algorithm (hash512) and appkey).  
+At least create with compact.  
+
+We also parse (decode) tokens here.  
+
+
+In JwtTokenGenerator:
+```java
+@Component
+public class JwtTokenGenerator {
+
+    @Value("${softtechspringboot.jwt.security.app.key}")
+    private String APP_KEY;
+
+    @Value("${softtechspringboot.jwt.security.expire.time}")
+    private Long EXPIRE_TIME;
+
+    public String generateJwtToken(Authentication authentication){
+
+        JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
+        Date expireDate = new Date(new Date().getTime() + EXPIRE_TIME);
+
+        String token = Jwts.builder()
+                .setSubject(Long.toString(jwtUserDetails.getId()))
+                .setIssuedAt(new Date())
+                .setExpiration(expireDate)
+                .signWith(SignatureAlgorithm.HS512, APP_KEY)
+                .compact();
+
+        return token;
+    }
+
+    public Long findUserIdByToken(String token){
+
+        Jws<Claims> claimsJws = parseToken(token);
+
+        String userIdStr = claimsJws
+                .getBody()
+                .getSubject();
+
+        return Long.parseLong(userIdStr);
+    }
+
+    private Jws<Claims> parseToken(String token) {
+        Jws<Claims> claimsJws = Jwts.parser()
+                .setSigningKey(APP_KEY)
+                .parseClaimsJws(token);
+        return claimsJws;
+    }
+
+    public boolean validateToken(String token){
+
+        boolean isValid;
+
+        try {
+            Jws<Claims> claimsJws = parseToken(token);
+
+            isValid = !isTokenExpired(claimsJws);
+        } catch (Exception e){
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    private boolean isTokenExpired(Jws<Claims> claimsJws) {
+
+        Date expirationDate = claimsJws.getBody().getExpiration();
+
+        return expirationDate.before(new Date());
+    }
+}
+```
+
+
+
+```java
+@Service
+@RequiredArgsConstructor
+public class AuthenticationService {
+
+    private final CusCustomerService cusCustomerService;
+    private final CusCustomerEntityService cusCustomerEntityService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenGenerator jwtTokenGenerator;
+
+    public CusCustomerDto register(CusCustomerSaveRequestDto cusCustomerSaveRequestDto) {
+
+        CusCustomerDto cusCustomerDto = cusCustomerService.save(cusCustomerSaveRequestDto);
+
+        return cusCustomerDto;
+    }
+
+    public String login(SecLoginRequestDto secLoginRequestDto) {
+
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(secLoginRequestDto.getIdentityNo().toString(), secLoginRequestDto.getPassword());
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String token = jwtTokenGenerator.generateJwtToken(authentication);
+
+        String bearer = EnumJwtConstant.BEARER.getConstant();
+
+        return bearer + token;
+    }
+
+    public CusCustomer getCurrentCustomer() {
+
+        JwtUserDetails jwtUserDetails = getCurrentJwtUserDetails();
+
+        CusCustomer cusCustomer = null;
+        if (jwtUserDetails != null){
+            cusCustomer = cusCustomerEntityService.getByIdWithControl(jwtUserDetails.getId());
+        }
+
+        return cusCustomer;
+    }
+
+    public Long getCurrentCustomerId(){
+
+        JwtUserDetails jwtUserDetails = getCurrentJwtUserDetails();
+        return jwtUserDetails.getId();
+    }
+
+    private JwtUserDetails getCurrentJwtUserDetails() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        JwtUserDetails jwtUserDetails = null;
+        if (authentication != null && authentication.getPrincipal() instanceof JwtUserDetails){
+            jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
+        }
+        return jwtUserDetails;
+    }
+}
+```
+In security package, there are 5 files:  
+
+In JwtAuthenticationEntryPoint:	
+```java
+@Component
+public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+
+    @Override
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
+    }
+}
+```
+
+
+In JwtAuthenticationFilter:
+```java
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    @Autowired
+    private JwtTokenGenerator jwtTokenGenerator;
+
+    @Autowired
+    private JwtUserDetailsService jwtUserDetailsService;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
+
+        String token = getToken(request);
+
+        if (StringUtils.hasText(token)){
+
+            boolean isValid = jwtTokenGenerator.validateToken(token);
+
+            if (isValid){
+
+                Long userId = jwtTokenGenerator.findUserIdByToken(token);
+
+                UserDetails userDetails = jwtUserDetailsService.loadUserByUserId(userId);
+
+                if (userDetails != null){
+
+                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                }
+            }
+        }
+
+        filterChain.doFilter(request, response);
+    }
+
+    private String getToken(HttpServletRequest request) {
+        String fullToken = request.getHeader("Authorization");
+
+        String token = null;
+        if (StringUtils.hasText(fullToken)){
+            String bearer = EnumJwtConstant.BEARER.getConstant();
+
+            if (fullToken.startsWith(bearer)){
+                token = fullToken.substring(bearer.length());
+            }
+        }
+        return token;
+    }
+}
+```
+
 Create a controller for login and register operations:
 ```java
 @RestController
@@ -205,309 +529,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated();
 
         httpSecurity.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-    }
-}
-```
-In service:
-
-
-There is a interface called UserDetails for creating user based security.  
-Create a class (JwtUserDetails) and implement UserDetails and override it's methods.  
-We will mostly use authority, username, password, user's id.  
-Add id,username,password fields (depends on your User class).  
-Implement a create method that initiates fields.  
-Making the constructor private, blocks access to the constructor.  
-
-
-In JwtUserDetails:
-```java
-public class JwtUserDetails implements UserDetails {
-
-    private Long id;
-    private String username;
-    private String password;
-    private Collection<? extends GrantedAuthority> authorities;
-
-    private JwtUserDetails(Long id, String username, String password, Collection<? extends GrantedAuthority> authorities) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.authorities = authorities;
-    }
-
-    public static JwtUserDetails create(CusCustomer cusCustomer){
-
-        Long id = cusCustomer.getId();
-        String username = cusCustomer.getIdentityNo().toString();
-        String password = cusCustomer.getPassword();
-
-        List<GrantedAuthority> grantedAuthorityList = new ArrayList<>();
-        grantedAuthorityList.add(new SimpleGrantedAuthority("user"));
-
-        return new JwtUserDetails(id, username, password, grantedAuthorityList);
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
-    public Long getId() {
-        return id;
-    }
-}
-```
-
-
-In JwtUserDetailsService:
-```java
-@Service
-@RequiredArgsConstructor
-public class JwtUserDetailsService implements UserDetailsService {
-
-    private final CusCustomerEntityService cusCustomerEntityService;
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-        Long identityNo = Long.valueOf(username);
-
-        CusCustomer cusCustomer = cusCustomerEntityService.findByIdentityNo(identityNo);
-
-        return JwtUserDetails.create(cusCustomer);
-    }
-
-    public UserDetails loadUserByUserId(Long id) {
-
-        CusCustomer cusCustomer = cusCustomerEntityService.getByIdWithControl(id);
-
-        return JwtUserDetails.create(cusCustomer);
-    }
-}
-```
-
-```java
-@Service
-@RequiredArgsConstructor
-public class AuthenticationService {
-
-    private final CusCustomerService cusCustomerService;
-    private final CusCustomerEntityService cusCustomerEntityService;
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenGenerator jwtTokenGenerator;
-
-    public CusCustomerDto register(CusCustomerSaveRequestDto cusCustomerSaveRequestDto) {
-
-        CusCustomerDto cusCustomerDto = cusCustomerService.save(cusCustomerSaveRequestDto);
-
-        return cusCustomerDto;
-    }
-
-    public String login(SecLoginRequestDto secLoginRequestDto) {
-
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(secLoginRequestDto.getIdentityNo().toString(), secLoginRequestDto.getPassword());
-        Authentication authentication = authenticationManager.authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String token = jwtTokenGenerator.generateJwtToken(authentication);
-
-        String bearer = EnumJwtConstant.BEARER.getConstant();
-
-        return bearer + token;
-    }
-
-    public CusCustomer getCurrentCustomer() {
-
-        JwtUserDetails jwtUserDetails = getCurrentJwtUserDetails();
-
-        CusCustomer cusCustomer = null;
-        if (jwtUserDetails != null){
-            cusCustomer = cusCustomerEntityService.getByIdWithControl(jwtUserDetails.getId());
-        }
-
-        return cusCustomer;
-    }
-
-    public Long getCurrentCustomerId(){
-
-        JwtUserDetails jwtUserDetails = getCurrentJwtUserDetails();
-        return jwtUserDetails.getId();
-    }
-
-    private JwtUserDetails getCurrentJwtUserDetails() {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        JwtUserDetails jwtUserDetails = null;
-        if (authentication != null && authentication.getPrincipal() instanceof JwtUserDetails){
-            jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
-        }
-        return jwtUserDetails;
-    }
-}
-```
-In security package, there are 5 files:  
-
-In JwtAuthenticationEntryPoint:	
-```java
-@Component
-public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
-
-    @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
-    }
-}
-```
-
-In JwtTokenGenerator:
-```java
-@Component
-public class JwtTokenGenerator {
-
-    @Value("${softtechspringboot.jwt.security.app.key}")
-    private String APP_KEY;
-
-    @Value("${softtechspringboot.jwt.security.expire.time}")
-    private Long EXPIRE_TIME;
-
-    public String generateJwtToken(Authentication authentication){
-
-        JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
-        Date expireDate = new Date(new Date().getTime() + EXPIRE_TIME);
-
-        String token = Jwts.builder()
-                .setSubject(Long.toString(jwtUserDetails.getId()))
-                .setIssuedAt(new Date())
-                .setExpiration(expireDate)
-                .signWith(SignatureAlgorithm.HS512, APP_KEY)
-                .compact();
-
-        return token;
-    }
-
-    public Long findUserIdByToken(String token){
-
-        Jws<Claims> claimsJws = parseToken(token);
-
-        String userIdStr = claimsJws
-                .getBody()
-                .getSubject();
-
-        return Long.parseLong(userIdStr);
-    }
-
-    private Jws<Claims> parseToken(String token) {
-        Jws<Claims> claimsJws = Jwts.parser()
-                .setSigningKey(APP_KEY)
-                .parseClaimsJws(token);
-        return claimsJws;
-    }
-
-    public boolean validateToken(String token){
-
-        boolean isValid;
-
-        try {
-            Jws<Claims> claimsJws = parseToken(token);
-
-            isValid = !isTokenExpired(claimsJws);
-        } catch (Exception e){
-            isValid = false;
-        }
-
-        return isValid;
-    }
-
-    private boolean isTokenExpired(Jws<Claims> claimsJws) {
-
-        Date expirationDate = claimsJws.getBody().getExpiration();
-
-        return expirationDate.before(new Date());
-    }
-}
-```
-In JwtAuthenticationFilter:
-```java
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
-    @Autowired
-    private JwtTokenGenerator jwtTokenGenerator;
-
-    @Autowired
-    private JwtUserDetailsService jwtUserDetailsService;
-
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
-
-        String token = getToken(request);
-
-        if (StringUtils.hasText(token)){
-
-            boolean isValid = jwtTokenGenerator.validateToken(token);
-
-            if (isValid){
-
-                Long userId = jwtTokenGenerator.findUserIdByToken(token);
-
-                UserDetails userDetails = jwtUserDetailsService.loadUserByUserId(userId);
-
-                if (userDetails != null){
-
-                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                }
-            }
-        }
-
-        filterChain.doFilter(request, response);
-    }
-
-    private String getToken(HttpServletRequest request) {
-        String fullToken = request.getHeader("Authorization");
-
-        String token = null;
-        if (StringUtils.hasText(fullToken)){
-            String bearer = EnumJwtConstant.BEARER.getConstant();
-
-            if (fullToken.startsWith(bearer)){
-                token = fullToken.substring(bearer.length());
-            }
-        }
-        return token;
     }
 }
 ```
