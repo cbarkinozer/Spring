@@ -559,6 +559,42 @@ public enum EnumJwtConstant {
 
 ```
 
+To add authorization button on Swagger.  
+In gen>config>SwaggerConfig:  
+```java
+@Configuration
+public class SwaggerConfig {
+
+    @Value("${application.title}")
+    private String APP_TITLE;
+
+    @Bean
+    public OpenAPI customOpenAPI(){
+
+        final String securitySchemeName = "bearerAuth";
+        final String apiTitle = String.format("%s API", StringUtils.capitalize(APP_TITLE));
+
+        return new OpenAPI()
+                .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
+                .components(
+                        new Components()
+                                .addSecuritySchemes(securitySchemeName,
+                                        new SecurityScheme()
+
+                                                .name(securitySchemeName)
+                                                .type(SecurityScheme.Type.HTTP)
+                                                .scheme("bearer")
+                                                .bearerFormat("JWT")
+                                )
+                )
+                .info(new Info().title(apiTitle).version("1"));
+    }
+}
+```
+
+Now, from this button you can acces the api by entering your token (wihtout bearer).  
+
+
 
 ## References
 https://tugrulbayrak.medium.com/jwt-json-web-tokens-nedir-nasil-calisir-5ca6ebc1584a    
