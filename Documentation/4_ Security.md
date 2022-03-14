@@ -409,9 +409,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
 
         httpSecurity
-                .cors()
+                .cors() //cross origin resource sharing
                 .and()
-                .csrf().disable()
+                .csrf().disable() //Cross-Site Request Forgery
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -421,7 +421,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger-ui/**",
                         "/swagger-ui.html",
                         "/v3/api-docs/**"
-                )
+                ) //request accepted resources(register and login points)
                 .permitAll()
                 .anyRequest().authenticated();
 
@@ -433,10 +433,46 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
 
+Create a controller for login and register operations:
+```java
+@RestController
+@RequestMapping("/auth")
+@RequiredArgsConstructor
+public class AuthenticationController {
+
+    private final AuthenticationService authenticationService;
+
+    @Operation(tags = "Authentication Controller")
+    @PostMapping("/login")
+    public ResponseEntity login(@RequestBody SecLoginRequestDto secLoginRequestDto){
+
+        String token = authenticationService.login(secLoginRequestDto);
+        return ResponseEntity.ok(RestResponse.of(token));
+    }
+
+    @Operation(tags = "Authentication Controller")
+    @PostMapping("/register")
+    public ResponseEntity register(@RequestBody CusCustomerSaveRequestDto cusCustomerSaveRequestDto){
+
+        CusCustomerDto cusCustomerDto =authenticationService.register(cusCustomerSaveRequestDto);
+        return ResponseEntity.ok(RestResponse.of(cusCustomerDto));
+    }
+}
+```
 
 
+In dto:
+```java
+@Data
+public class SecLoginRequestDto {
+
+    private Long identityNo;
+    private String password;
+}
+```
 
 
+AuthenticationController use AuthenticationService:
 
 ```java
 @Service
@@ -499,45 +535,6 @@ public class AuthenticationService {
 }
 ```
 
-
-
-
-Create a controller for login and register operations:
-```java
-@RestController
-@RequestMapping("/auth")
-@RequiredArgsConstructor
-public class AuthenticationController {
-
-    private final AuthenticationService authenticationService;
-
-    @Operation(tags = "Authentication Controller")
-    @PostMapping("/login")
-    public ResponseEntity login(@RequestBody SecLoginRequestDto secLoginRequestDto){
-
-        String token = authenticationService.login(secLoginRequestDto);
-        return ResponseEntity.ok(RestResponse.of(token));
-    }
-
-    @Operation(tags = "Authentication Controller")
-    @PostMapping("/register")
-    public ResponseEntity register(@RequestBody CusCustomerSaveRequestDto cusCustomerSaveRequestDto){
-
-        CusCustomerDto cusCustomerDto =authenticationService.register(cusCustomerSaveRequestDto);
-        return ResponseEntity.ok(RestResponse.of(cusCustomerDto));
-    }
-}
-```
-
-In dto:
-```java
-@Data
-public class SecLoginRequestDto {
-
-    private Long identityNo;
-    private String password;
-}
-```
 
 In  enums:
 ```java
