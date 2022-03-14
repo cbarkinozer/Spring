@@ -594,6 +594,7 @@ public class SwaggerConfig {
 
 Now, from this button you can acces the api by entering your token (wihtout bearer).  
 
+**Swagger Documentation**
 
 
 ## References
@@ -602,3 +603,4 @@ https://medium.com/kodluyoruz/json-web-token-jwt-authentication-b5e6675a6e19
 https://jwt.io/introduction/  
 https://github.com/sbahadirm/softtech-spring-boot/tree/master/src/main/java/com/softtech/softtechspringboot/app/sec  
 https://www.baeldung.com/spring-onceperrequestfilter  
+https://www.baeldung.com/spring-rest-openapi-documentation  
