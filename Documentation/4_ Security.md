@@ -149,7 +149,7 @@ public class JwtUserDetails implements UserDetails {
 ```
 
 
-In service:  
+In security:  
 
 Create a class (JwtUserDetailsService) and implement UserDetailsService to create a service and override it's methods.  
 In this class we handle loading user by username and id.    
