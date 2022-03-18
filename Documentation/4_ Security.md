@@ -67,7 +67,7 @@ Add following to pom.xml:
 </dependency>
 ```
 
-Create a package called sec and inside security, config, controller, dto, enums, security, service.  
+Create a package called sec and inside add following packages security, config, controller, dto, enums, security, service.  
 
 In security package:
 
