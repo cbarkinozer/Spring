@@ -7,5 +7,3 @@
 # Packaging applications for deployment using Docker and Jib
 
 # Software Deployment Automation with Github Actions
-
-# Unit and Integration Testing
