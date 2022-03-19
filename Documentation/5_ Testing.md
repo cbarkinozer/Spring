@@ -8,13 +8,12 @@ Imitating injected layers to those classes
 Spying
 It is partial Mocking
 
-
 # Spring Boot Test Framework
 
-# Unit Testlerin Yazılması - JUnit
+# Unit Tests
 
-# Integration Testlerin yazılması
+# Integration Tests
 
-# Test Containers
+## References  
+https://www.baeldung.com/spring-boot-testing  
 
-# Jenkins
