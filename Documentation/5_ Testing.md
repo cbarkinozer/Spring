@@ -55,9 +55,66 @@ In Spring Boot project there is a test file where we add our tests inside.
 Put your index on the class name you want to test and press Alt + Enter.  
 Create Test comes up. By doing that you can boot your test.  
 
+For example we have a method "LocalDate convertToLocalDate (Date date);".  
+This method gets Date and converts it to LocalDate.  
+To test this you can write following:  
+
+First testing the happy path:
+```java
+@Test
+    void shouldConvertToLocalDate() throws ParseException {
+
+        Date date = formatterDate.parse("05-10-1991");
+
+        LocalDate localDate = DateUtil.convertToLocalDate(date);
+
+        assertEquals(5, localDate.getDayOfMonth());
+        assertEquals(10, localDate.getMonthValue());
+        assertEquals(1991, localDate.getYear());
+    }
+```
+Now testing null pointer exception :
+```java
+@Test
+void shouldNotConvertToLocalDateWhenParameterIsNull(){
+    assertThrows(GenBussinessException.class,()->DateUtil.convertToLocalDate(null)); // When Date is null, it should throw GenBussinessException. 
+}
+```
+ Now testing all edges:
+ ```java
+   @Test
+    void shouldConvertToLocalDateWhen29Feb() throws ParseException {
+
+        Date date = formatterDate.parse("29-02-2016");
+
+        LocalDate localDate = DateUtil.convertToLocalDate(date);
+
+        assertEquals(29, localDate.getDayOfMonth());
+        assertEquals(02, localDate.getMonthValue());
+        assertEquals(2016, localDate.getYear());
+    }
+     @Test
+    void shouldConvertToLocalDateTime() throws ParseException {
+
+        Date date = formatterDateTime.parse("05-10-1991 10:11:12");
+
+        LocalDateTime localDateTime = DateUtil.convertToLocalDateTime(date);
+
+        assertEquals(5, localDateTime.getDayOfMonth());
+        assertEquals(10, localDateTime.getMonthValue());
+        assertEquals(1991, localDateTime.getYear());
+        assertEquals(10, localDateTime.getHour());
+        assertEquals(11, localDateTime.getMinute());
+        assertEquals(12, localDateTime.getSecond());
+    }
+    //Goes like that...
+    
+ ```
+
 
 ## References  
 https://www.baeldung.com/spring-boot-testing  
 https://www.baeldung.com/mockito-annotations  
 https://glowing-crest-6d5.notion.site/Softtech-Java-Spring-Bootcamp-191efcce77654cd493643314176e4957  
 https://medium.com/@tasdikrahman/f-i-r-s-t-principles-of-testing-1a497acda8d6  
+https://dzone.com/articles/7-popular-unit-test-naming  
