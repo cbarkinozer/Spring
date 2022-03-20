@@ -594,9 +594,6 @@ public class SwaggerConfig {
 
 Now, from this button you can acces the api by entering your token (wihtout bearer).  
 
-**Swagger Documentation**
-
-
 ## References
 https://tugrulbayrak.medium.com/jwt-json-web-tokens-nedir-nasil-calisir-5ca6ebc1584a    
 https://medium.com/kodluyoruz/json-web-token-jwt-authentication-b5e6675a6e19  
