@@ -2,7 +2,7 @@
 ## Spring Core
 
 **The Spring Framework** (Spring) is a modular, open-source application framework that provides infrastructure support for developing Java applications.
-One of the most popular Java Enterprise Edition (Java EE) frameworks, Spring helps developers create high-performing applications using plain old Java objects (POJOs).  
+Spring, one of the most popular Java Enterprise Edition (Java EE) frameworks, assists developers in creating high-performance applications using simple Java objects (POJOs). 
 Rod Johnson created it in 2003 because the EJB had architectural problems. Spring is the most popular framework for java.  
 
 **Plain old java object(POJO)**: An ordinary Java object, not bound by any special restriction.  
@@ -26,7 +26,7 @@ To make it possible, the Spring frameworks use abstractions and rely on object g
 
 **Advantages of IoC principle**:
 Decouples the task implementation from its execution.  
-Modules are pluggable and can be easily replaced with their equivalent.  
+Modules are pluggable and easily interchangeable with their equivalents.  
 Eases out the modular testing.  
 
 **Methods for achieving Inversion Of Control**: Strategy Design Pattern, Service Locator Pattern, or Dependency Injection.
@@ -45,7 +45,7 @@ public class Person {
     ...
 }
 ```
-We’ll not create objects on our own and rather inject them.
+We will not create objects on our own, but will instead inject them.
 The following is an example of dependency injection by using constructor:  
 ```java
 public class Person {
@@ -90,7 +90,7 @@ public class Person {
     }
 }
 ```
-Spring, by default, wires the beans by their type.  
+Spring wires the beans by type by default. 
 If there are more than one beans of the same type, we can use @Qualifier annotation to reference a bean by its name:  
 
 ```java
@@ -105,7 +105,7 @@ public class Person {
 }
 ```
 2. **Setter injection**  
-Setter-based dependency injection is achieved through the setter method on the bean after instantiating it using a no-arg constructor or no-argument static factory.  
+Setter-based dependency injection is accomplished by calling the setter method on the bean after it has been instantiated with a no-arg constructor or no-argument static factory.  
 
 XML  
 ```xml
@@ -128,8 +128,8 @@ public class Person {
 }
 ```
 3. **Property-based injection** 
-We can also inject dependencies using fields or properties of a class.  
-To do so, we can simply use the @Autowired annotation over the field:  
+We can also inject dependencies into a class by using its fields or properties.  
+To do so, simply apply the @Autowired annotation to the field:   
 
 ```java
 @Component
@@ -159,8 +159,8 @@ Let’s instantiate the Spring container using ClassPathXmlApplicationContext:
 ApplicationContext appContext = new ClassPathXmlApplicationContext("applicationContext.xml");  
 ```
 
-**Spring IoC container**: The core of Spring Framework. It creates the objects, configures and assembles their dependencies, manages their entire life cycle.  
-The Container uses Dependency Injection(DI) to manage the components that make up the application.  
+**Spring IoC container**: The core of Spring Framework. It creates the objects, configures and assembles their dependencies, and manages them throughout their entire life cycle.   
+The Container manages the application's components using Dependency Injection (DI).  
 It gets the information about the objects from a configuration file(XML) or Java Code or Java Annotations and Java POJO class. These objects are called Beans.  
 
 Following is how Spring Core works:  
