@@ -3,7 +3,7 @@
 
 **The Spring Framework** (Spring) is a modular, open-source application framework that provides infrastructure support for developing Java applications.
 Spring, one of the most popular Java Enterprise Edition (Java EE) frameworks, assists developers in creating high-performance applications using simple Java objects (POJOs). 
-Rod Johnson created it in 2003 because the EJB had architectural problems. Spring is the most popular framework for java.  
+Rod Johnson created it in 2003 because the EJB had architectural problems. Spring is one of the most popular frameworks for java. 
 
 **Plain old java object(POJO)**: An ordinary Java object, not bound by any special restriction.  
 It should not implement or extend any class/interface.  
@@ -60,7 +60,7 @@ public class Person {
 **Spring supports 3 types of dependency injection**:  
 1. **Constructor-based injection**  
 
-Spring will use the matching constructor to resolve and inject the dependency.  
+Spring will resolve and inject the dependency using the corresponding constructor. 
 
 i. We can either configure the beans in applicationContext.xml:  
 
@@ -150,18 +150,18 @@ This technique benefits: beans declared in a package, beans declared by annotati
 There are 3 ways to configure applicationContext: XML based(configuring beans in xml), java based, annotation based( enabling <component-scan> in xml and using annotation in java code).  
 
 The Spring ApplicationContext interface represents its IoC container and has several implementation classes available.  
-Some of these include **ClassPathXmlApplicationContext**, **FileSystemXmlApplicationContext**, and **WebApplicationContext**.  
+**ClassPathXmlApplicationContext**, **FileSystemXmlApplicationContext**, and **WebApplicationContext** are a few examples.   
 
 Let’s instantiate the Spring container using ClassPathXmlApplicationContext:  
 
 ```java
-//The applicationContext.xml is the file that holds the metadata required to assemble beans at runtime.
+//The file applicationContext.xml contains the metadata necessary to build beans at runtime.
 ApplicationContext appContext = new ClassPathXmlApplicationContext("applicationContext.xml");  
 ```
 
 **Spring IoC container**: The core of Spring Framework. It creates the objects, configures and assembles their dependencies, and manages them throughout their entire life cycle.   
 The Container manages the application's components using Dependency Injection (DI).  
-It gets the information about the objects from a configuration file(XML) or Java Code or Java Annotations and Java POJO class. These objects are called Beans.  
+It obtains information about the objects from an XML configuration file, Java code, Java annotations, and Java POJO classes. These items are known as Beans.    
 
 Following is how Spring Core works:  
 ![image](https://user-images.githubusercontent.com/43732258/153714507-fa2d5bec-fafc-4fdf-9f46-6020688d374f.png)
