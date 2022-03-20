@@ -1,19 +1,53 @@
+### Software Testing
+Software Testing is a method to check whether the actual software product matches expected requirements and to ensure that software product is Defect free.  
+The purpose of software testing is to identify errors, gaps or missing requirements in contrast to actual requirements.  
 
-# Spring Boot Test Framework
+### Advantages of Software Testing  
 
-# Unit Tests
+**Spot ambiguities early**  
+When you write test you take the perspective of the one that will consume your code so requirements become obvious.    
 
-# Integration Tests
+**Design Better**
+Writing tests force you to write code that is loosly coupled and better.  
 
-What is testing Advantages Disadvantages
-Unit Testing
+**Easier debugging**  
+Debugging takes time, testing save you lots of time.  
+
+**Up to Date Code Documentation**  
+Tests are great documentations and progress measuring tools because 
+- Tests are written at development time, they capture the initial intention that is often somewhat blurred by implementation details.
+- Tests must necessarily be kept up-to-date with code modifications. Else they cannot pass.
+- A test is a small program that exercise step-by-step a scenario.
+
+**Software requirements evolve with time.**   
+Code evolve with time and sometimes design decisions taking at the start cause regression in the project with time.  
+For example project starts to work slower and test time shows this a lot earlier.  
+Or tests make you realise defects caused by previous decisions.  
+
+**Refactor and release with confidence**   
+You can freely modify your code and release it with confidence in the quality of your project.
+
+**Save time and enjoy**   
+Tests cause less frictions with users and the management because new requirements can be implemented more quickly.  
+Moreover it is so much more pleasant to work in a well tested code base.  
+
+### When to Not Do Software Testing
+There is no disadvantage of software testing when done correct.  
+To do it correctly you need to know when to not test.  
+Do not test the code that you did not write such as Repositories or packages you are using.  
+Also do not test everything and the parts that are too small.  
+Do not forget, tests need to get you time in the long run.  
+
+**Unit Testing**
+
 Bağımsız çalışan enjeksyonu olmayan katmanların testidir. Util sınıfları gibi bağımlılığı olmayan sınıflara yapılır.
-Mocking
+### Integration Testing
+### Mocking
 Imitating injected layers to those classes
-Spying
+### Spying
 It is partial Mocking
 
-**F.I.R.S.T Princple**
+### F.I.R.S.T Princple  
 **Fast**: Tests should run and show you the desired output in a matter of seconds.  
 **Isolated/Independent**: Tests should be independent of everything else should so that it results is not influenced by any other factor..  
 **Repeatable**: Tests should be repeatable and deterministic(values shouldn’t change).  
@@ -22,23 +56,26 @@ It is partial Mocking
 
 **Cover these cases in this order: Happy case, all edges(e.g 29 Feb for dates), illegal arguments and variables(e.g null), security(and other issues), large values, all use case scenarios.**
 
-**3 A's of testing**  
+### 3 A's of testing  
 **Arrange(Given)**: All the data should be provided to the test and the test should not depend on the environment.  
 **Act(When)**: Invoke the actual method under test.  
 **Assert(Then)**: A unit test should only assert one logical outcome.  
 
-**Preferably, don’t do any actions after the assert call.**
+**Preferably, don’t do any actions after the assert call.** 
 
-**Note**: Do net test the code that you did not write such as Repositories or packages you are using.  
-Also do not test everything and too small parts. Do not forget tests need to get you time in the long run.  
-
+### Unit and Integration Testing Annotations for Java
 
 **@Test**  
+
 **@BeforeAll**  
+
 **@BeforeEach**  
+
 **@AfterAll**  
+
 **@AfterEach**  
 
+### Testing Naming Conventions**
 
 ## Implementation
 Add following dependency to the pom.xml file:
@@ -120,3 +157,6 @@ https://www.baeldung.com/mockito-annotations
 https://glowing-crest-6d5.notion.site/Softtech-Java-Spring-Bootcamp-191efcce77654cd493643314176e4957  
 https://medium.com/@tasdikrahman/f-i-r-s-t-principles-of-testing-1a497acda8d6  
 https://dzone.com/articles/7-popular-unit-test-naming  
+https://www.guru99.com/software-testing-introduction-importance.html  
+https://blog.ndepend.com/10-reasons-why-you-should-write-tests/  
+https://www.baeldung.com/java-unit-testing-best-practices 
