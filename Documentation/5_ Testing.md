@@ -38,15 +38,6 @@ Do not test the code that you did not write such as Repositories or packages you
 Also do not test everything and the parts that are too small.  
 Do not forget, tests need to get you time in the long run.  
 
-**Unit Testing**
-
-Bağımsız çalışan enjeksyonu olmayan katmanların testidir. Util sınıfları gibi bağımlılığı olmayan sınıflara yapılır.
-### Integration Testing
-### Mocking
-Imitating injected layers to those classes
-### Spying
-It is partial Mocking
-
 ### F.I.R.S.T Princple  
 **Fast**: Tests should run and show you the desired output in a matter of seconds.  
 **Isolated/Independent**: Tests should be independent of everything else should so that it results is not influenced by any other factor..  
@@ -63,7 +54,33 @@ It is partial Mocking
 
 **Preferably, don’t do any actions after the assert call.** 
 
-### Unit and Integration Testing Annotations for Java
+**Unit Testing**
+A type of software testing where individual units or components of a software are tested.  
+The purpose is to validate that each unit of the software code performs as expected.  
+What is a Unit is controversial (class or method).  
+A unit is a part that is independent of other structures.  
+For example methods of the utility class are unit tested.  
+
+### Integration Testing
+Integration tests focus on integrating different layers of the application.  
+Individual software modules are combined and tested as a group for this purpose.  
+And integration testing does not include mocking.   
+If every dependency of a unit under test has been mocked, there is no integration with any external unit, hence the test is not an integration test.  
+
+### Mocking
+An object under test may have dependencies on other (complex) objects.  
+To isolate the behavior of the object you want to replace the other objects by mocks that simulate the behavior of the real objects.  
+This is useful if the real objects are impractical to incorporate into the unit test.  
+Mocking is creating objects that simulate the behavior of real objects.  
+
+### Spying
+Spies are known as partially mock objects.   
+When a layer is too large and we do not mock all that layer, spying is performed.  
+
+### Stubbing
+Stubbing is like mocking but a stub only mocks the behavior, but not the entire object.  
+
+### Testing Annotations for Java
 
 **@Test**  
 
@@ -75,7 +92,23 @@ It is partial Mocking
 
 **@AfterEach**  
 
-### Testing Naming Conventions**
+**@Mock**  
+
+**@InjectMocks**    
+
+**@Spy**  
+
+
+### Testing Naming Conventions  
+Some add test, should, when prefixes.  
+I do no like adding the same post or prefixes to every method name.  
+It makes methods to find when searched.  
+
+I prefer "given_When_Then();" naming style.  
+For example:
+"doubleMaxValueAsRadius_CalculateArea_ReturnAreaAsInfinity();"
+"isAdult_AgeLessThan18_False();"
+
 
 ## Implementation
 Add following dependency to the pom.xml file:
