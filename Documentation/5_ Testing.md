@@ -148,8 +148,8 @@ Now testing null pointer exception :
 @Test
 void shouldNotConvertToLocalDateWhenParameterIsNull(){
     assertThrows(GenBussinessException.class,()->DateUtil.convertToLocalDate(null)); // When Date is null, it should throw GenBussinessException. 
-    org.assertj.core.api.Assertions.assertThat(genBusinessException.getBaseErrorMessage()).isEqualTo(GenErrorMessage.DATE_COULD_NOT_BE_CONVERTED);
-    //AssertJ also can check if result is the wanted error message.  
+    GenBussinessException genBussinessException;
+    assertEquals(genBussinessException.getErrorMessage(),GenBussinessException.DATE_COULD_NOT_BE_CONVERTED); //Check if result equals to the wanted error message.
 }
 ```
  Now testing all edges:
