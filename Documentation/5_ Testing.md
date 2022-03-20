@@ -22,7 +22,7 @@ It is partial Mocking
 
 **Cover these cases in this order: Happy case, all edges(e.g 29 Feb for dates), illegal arguments and variables(e.g null), security(and other issues), large values, all use case scenarios.**
 
-**3 A's of testing**:
+**3 A's of testing**  
 **Arrange(Given)**: All the data should be provided to the test and the test should not depend on the environment.  
 **Act(When)**: Invoke the actual method under test.  
 **Assert(Then)**: A unit test should only assert one logical outcome.  
@@ -34,10 +34,10 @@ Also do not test everything and too small parts. Do not forget tests need to get
 
 
 **@Test**  
-**@BeforeAll**
-**@BeforeEach**
-**@AfterAll**
-**@AfterEach**
+**@BeforeAll**  
+**@BeforeEach**  
+**@AfterAll**  
+**@AfterEach**  
 
 
 ## Implementation
