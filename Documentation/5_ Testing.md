@@ -159,6 +159,19 @@ public void whenUseInjectMocksAnnotation_thenCorrect() {
 
 **@Spy**  
 
+@Spy take an existing instance and override only some or none methods.  
+```java
+@Spy
+private List<String> spiedList = new ArrayList<>();
+
+@Test
+public void testSpiedList() {
+    spiedList.add("one");
+    Mockito.verify(spiedList).add("one");
+
+    Assert.assertEquals(1, spiedList.size());
+}
+```
 
 ### Testing Naming Conventions  
 Some add test, should, when prefixes.  
