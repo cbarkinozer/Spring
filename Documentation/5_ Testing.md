@@ -83,18 +83,79 @@ Stubbing is like mocking but a stub only mocks the behavior, but not the entire 
 ### Testing Annotations for Java
 
 **@Test**  
+Annotates the test itself, you may have several methods annotated in this way in your application.  
+To run the method, JUnit first constructs a fresh instance of the class then invokes the annotated method.
+Any exceptions thrown by the test will be reported by JUnit as a failure.  
 
 **@BeforeAll**  
+Annotates that the annotated method should be executed before all the @Test, @RepeatedTest, @ParameterizedTest, and @TestFactory methods in the current class.  
+```java
+@BeforeAll
+    public static void init(){
+        System.out.println("BeforeAll init() method called");
+    }
+```
 
 **@BeforeEach**  
+Annotates that the annotated method should be executed before each invocation of @Test, @RepeatedTest, @ParameterizedTest, or @TestFactory method in the current class.
+```java
+    @BeforeEach
+    public void initEach(){
+        System.out.println("BeforeEach initEach() method called");
+    }
+```
 
 **@AfterAll**  
+Annotates that the annotated method should be executed after all tests in the current test class.  
+```java
+@AfterAll
+    public static void cleanUp(){
+        System.out.println("After All cleanUp() method called");
+    }  
+```
 
 **@AfterEach**  
+Annotates that the annotated method should be executed after each tests in the current test class.  
+```java
+    @AfterEach
+    public void cleanUpEach(){
+        System.out.println("After Each cleanUpEach() method called");
+    }
+```
 
 **@Mock**  
+Used to create and inject mocked instances.  
+```java
+@Mock
+List<String> mockedList;
+
+@Test
+public void whenUseMockAnnotation_thenMockIsInjected() {
+    mockedList.add("one");
+    Mockito.verify(mockedList).add("one");
+    assertEquals(0, mockedList.size());
+
+    Mockito.when(mockedList.size()).thenReturn(100);
+    assertEquals(100, mockedList.size());
+}
+```
 
 **@InjectMocks**    
+Injects values that are annotated with @Mock annotation.  
+```java
+@Mock
+Map<String, String> wordMap;
+
+@InjectMocks
+MyDictionary dic = new MyDictionary();
+
+@Test
+public void whenUseInjectMocksAnnotation_thenCorrect() {
+    Mockito.when(wordMap.get("aWord")).thenReturn("aMeaning");
+
+    assertEquals("aMeaning", dic.getMeaning("aWord"));
+}
+```
 
 **@Spy**  
 
@@ -147,9 +208,13 @@ Now testing null pointer exception :
 ```java
 @Test
 void shouldNotConvertToLocalDateWhenParameterIsNull(){
-    assertThrows(GenBussinessException.class,()->DateUtil.convertToLocalDate(null)); // When Date is null, it should throw GenBussinessException. 
-    GenBussinessException genBussinessException;
-    assertEquals(genBussinessException.getErrorMessage(),GenBussinessException.DATE_COULD_NOT_BE_CONVERTED); //Check if result equals to the wanted error message.
+
+    // When Date is null, it should throw GenBussinessException. 
+    GenBussinessException genBussinessException = assertThrows(GenBussinessException.class,()->DateUtil.convertToLocalDate(null));
+    
+    //Check if result equals to the wanted error message.
+    assertEquals(genBussinessException.getErrorMessage(),GenBussinessException.DATE_COULD_NOT_BE_CONVERTED);
+    
 }
 ```
  Now testing all edges:
@@ -193,3 +258,4 @@ https://dzone.com/articles/7-popular-unit-test-naming
 https://www.guru99.com/software-testing-introduction-importance.html  
 https://blog.ndepend.com/10-reasons-why-you-should-write-tests/  
 https://www.baeldung.com/java-unit-testing-best-practices 
+https://www.baeldung.com/mockito-annotations  
