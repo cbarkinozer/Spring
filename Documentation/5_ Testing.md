@@ -78,7 +78,7 @@ Spies are known as partially mock objects.
 When a layer is too large and we do not mock all that layer, spying is performed.  
 
 ### Stubbing
-Stubbing is like mocking but a stub only mocks the behavior, but not the entire object.  
+Stubbing is creating an instance of an object to use instead of a mock dependending by the need.    
 
 ### Testing Annotations for Java
 
