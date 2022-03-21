@@ -280,7 +280,85 @@ void shouldNotConvertToLocalDateWhenParameterIsNull(){
     CustomerConverter customerConverter;
     
     @Test
-    //...
+    void shouldFindAll() {
+
+        CusCustomer cusCustomer = mock(CusCustomer.class);
+        List<CusCustomer>  cusCustomerList = new ArrayList<>();
+        cusCustomerList.add(cusCustomer);
+
+        CusCustomerDto cusCustomerDto = mock(CusCustomerDto.class);
+        List<CusCustomerDto>  cusCustomerDtoList = new ArrayList<>();
+        cusCustomerDtoList.add(cusCustomerDto);
+
+        when(cusCustomerEntityService.findAll()).thenReturn(cusCustomerList);
+        when(cusCustomerConverter.convertToCusCustomerDtoList(cusCustomerList)).thenReturn(cusCustomerDtoList);
+
+        List<CusCustomerDto> result = cusCustomerService.findAll();
+
+        assertEquals(1, result.size());
+    }
+    @Test
+    void shouldFindById() {
+
+        Long id = 18L;
+
+        CusCustomer cusCustomer = mock(CusCustomer.class);
+        when(cusCustomer.getId()).thenReturn(id);
+
+        when(cusCustomerEntityService.getByIdWithControl(id)).thenReturn(cusCustomer);
+
+        CusCustomerDto cusCustomerDto = cusCustomerService.findById(id);
+
+        assertEquals(id, cusCustomerDto.getId());
+    }
+    @Test
+    void shouldSave() {
+
+        CusCustomerSaveRequestDto cusCustomerSaveRequestDto = mock(CusCustomerSaveRequestDto.class);
+        when(cusCustomerSaveRequestDto.getPassword()).thenReturn("123");
+
+        CusCustomer cusCustomer = mock(CusCustomer.class);
+        when(cusCustomer.getId()).thenReturn(1L);
+
+        when(passwordEncoder.encode(anyString())).thenReturn("bahadir_1234_123");
+        when(cusCustomerEntityService.save(any())).thenReturn(cusCustomer);
+
+        CusCustomerDto result = cusCustomerService.save(cusCustomerSaveRequestDto);
+
+        assertEquals(1L, result.getId());
+    }
+    @Test
+    void shouldUpdate() {
+
+        Long id = 18L;
+
+        CusCustomerUpdateRequestDto cusCustomerUpdateRequestDto = mock(CusCustomerUpdateRequestDto.class);
+        CusCustomer cusCustomer = mock(CusCustomer.class);
+        when(cusCustomer.getId()).thenReturn(id);
+
+        boolean isExist = true;
+
+        when(cusCustomerEntityService.existsById(anyLong())).thenReturn(isExist);
+        when(cusCustomerEntityService.save(any())).thenReturn(cusCustomer);
+
+        CusCustomerDto cusCustomerDto = cusCustomerService.update(cusCustomerUpdateRequestDto);
+
+        assertEquals(id, cusCustomerDto.getId());
+
+        verify(cusCustomerEntityService).existsById(anyLong());
+    }
+    @Test
+    void shouldDelete() {
+
+        CusCustomer cusCustomer = mock(CusCustomer.class);
+
+        when(cusCustomerEntityService.getByIdWithControl(anyLong())).thenReturn(cusCustomer);
+
+        cusCustomerService.delete(anyLong());
+
+        verify(cusCustomerEntityService).getByIdWithControl(anyLong());
+        verify(cusCustomerEntityService).delete(any());
+    }
     
  }
  ```
