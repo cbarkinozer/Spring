@@ -183,18 +183,18 @@ verify()
 Some add test, should, when prefixes.  
 I do no like adding the same post or prefixes to every method name.  
 It makes methods to find when searched.  
+Following is my preference:  
 
-MCA naming style "method_case_act()".  
-For example:
-"calculateArea_DoubleMaxValueAsRadius_ReturnAreaAsInfinity();"
-"isAdult_AgeLessThan18_False();"
+**DWI naming style**  
+"do_when_is()".   
 
-SWI Naming style "should_When_Is()";
-For example:
-"shouldNotReturnUser_WhenParameter_ISNUll"
-
-**Note**
-I prefer MCA naming for unit tests and SWI naming for integration and mock tests.  
+For example:  
+"returnAreaAsInfinity_WhenRadius_IsDoubleMaxValue()"
+"returnFalse_WhenAge_IsLessThen18()"  
+"returnUser_WhenParameter_IsPositive()"  
+"notReturnUser_WhenPrice_IsNUll()"  
+"throwException_WhenUsername_IsNotUnique()"  
+"convertToLocalDate_WhenDate_Is29Feb()"   
 
 ## Implementation
 Add following dependency to the pom.xml file:
