@@ -206,6 +206,7 @@ This method gets Date and converts it to LocalDate.
 To test this you can write following:  
 
 First testing the happy path:
+
 ```java
 @Test
     void shouldConvertToLocalDate() throws ParseException {
@@ -219,7 +220,9 @@ First testing the happy path:
         assertEquals(1991, localDate.getYear());
     }
 ```
+
 Now testing null pointer exception :
+
 ```java
 @Test
 void shouldNotConvertToLocalDateWhenParameterIsNull(){
@@ -232,8 +235,9 @@ void shouldNotConvertToLocalDateWhenParameterIsNull(){
     
 }
 ```
- Now testing all edges:
- ```java
+
+Now testing all edges:
+```java
    @Test
     void shouldConvertToLocalDateWhen29Feb() throws ParseException {
 
@@ -245,7 +249,7 @@ void shouldNotConvertToLocalDateWhenParameterIsNull(){
         assertEquals(02, localDate.getMonthValue());
         assertEquals(2016, localDate.getYear());
     }
-     @Test
+    @Test
     void shouldConvertToLocalDateTime() throws ParseException {
 
         Date date = formatterDateTime.parse("05-10-1991 10:11:12");
@@ -263,7 +267,7 @@ void shouldNotConvertToLocalDateWhenParameterIsNull(){
     
  ```
  
- ### Integration Test Example  
+ ### Mocking Testing Example  
  To test the CustomerService layer, you need to mock it's dependencies.  
  
  ```java
@@ -361,6 +365,110 @@ void shouldNotConvertToLocalDateWhenParameterIsNull(){
     }
     
  }
+ ```
+ 
+ 
+ ### Integration Testing Example  
+ 
+ In controller, we can not mock, we need to use real layers so it is integration testing.  
+
+```java
+@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = {SofttechSpringBootApplication.class, H2TestProfileJPAConfig.class})
+class CusCustomerControllerTest extends BaseTest {
+private static final String BASE_PATH = "/api/v1/customers";
+
+    private MockMvc mockMvc;
+
+    @Autowired
+    private WebApplicationContext context;
+
+    @BeforeEach
+    void setUp() {
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context).build();
+        this.objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    }
+    
+    @Test
+    void findAll() throws Exception {
+
+        MvcResult result = mockMvc.perform(
+                get(BASE_PATH).content("").contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk()).andReturn();
+
+        boolean isSuccess = isSuccess(result);
+
+        assertTrue(isSuccess);
+
+    }
+    
+     @Test
+    void findById() throws Exception {
+
+        MvcResult result = mockMvc.perform(
+                get(BASE_PATH + "/1").content("1L").contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk()).andReturn();
+
+        boolean isSuccess = isSuccess(result);
+
+        assertTrue(isSuccess);
+
+    }
+    
+     @Test
+    void save() throws Exception {
+
+        CusCustomerSaveRequestDto cusCustomerSaveRequestDto = CusCustomerSaveRequestDto.builder()
+                .name("erdem")
+                .surname("özoğlu")
+                .identityNo(12312312389L)
+                .password("12345678")
+                .build();
+
+        String content = objectMapper.writeValueAsString(cusCustomerSaveRequestDto);
+
+        MvcResult result = mockMvc.perform(
+                post(BASE_PATH).content(content).contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk()).andReturn();
+
+        boolean isSuccess = isSuccess(result);
+
+        assertTrue(isSuccess);
+
+    }
+    
+    @Test
+    void update() throws Exception {
+
+        CusCustomerUpdateRequestDto cusCustomerUpdateRequestDto = new CusCustomerUpdateRequestDto();
+        cusCustomerUpdateRequestDto.setId(2052L);
+        cusCustomerUpdateRequestDto.setName("test2");
+        cusCustomerUpdateRequestDto.setSurname("test2");
+        cusCustomerUpdateRequestDto.setIdentityNo(12345678918L);
+        cusCustomerUpdateRequestDto.setPassword("abcdefgh");
+
+        String content = objectMapper.writeValueAsString(cusCustomerUpdateRequestDto);
+
+        MvcResult result = mockMvc.perform(
+                put(BASE_PATH).content(content).contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk()).andReturn();
+
+        boolean isSuccess = isSuccess(result);
+
+        assertTrue(isSuccess);
+    }
+    
+    @Test
+    void deleteTest() throws Exception {
+
+        MvcResult result = mockMvc.perform(
+                delete(BASE_PATH + "/2202").content("2202").contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk()).andReturn();
+
+        boolean isSuccess = isSuccess(result);
+
+        assertTrue(isSuccess);
+    }
  ```
 
 
