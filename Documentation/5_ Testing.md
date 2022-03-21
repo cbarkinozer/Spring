@@ -199,6 +199,8 @@ In Spring Boot project there is a test file where we add our tests inside.
 Put your index on the class name you want to test and press Alt + Enter.  
 Create Test comes up. By doing that you can boot your test.  
 
+### Unit Test Example
+
 For example we have a method "LocalDate convertToLocalDate (Date date);".  
 This method gets Date and converts it to LocalDate.  
 To test this you can write following:  
@@ -259,6 +261,28 @@ void shouldNotConvertToLocalDateWhenParameterIsNull(){
     }
     //Goes like that...
     
+ ```
+ 
+ ### Integration Test Example  
+ To test the CustomerService layer, you need to mock it's dependencies.  
+ 
+ ```java
+ @ExtendWith(MockitoExtension.class)
+ class CustomerServiceTest{
+    
+    @InjectMocks
+    CustomerService customerService;
+    
+    @Mock
+    CustomerEntityService customerEntityService;
+    
+    @Mock
+    CustomerConverter customerConverter;
+    
+    @Test
+    //...
+    
+ }
  ```
 
 
