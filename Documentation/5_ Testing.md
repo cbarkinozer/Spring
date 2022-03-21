@@ -172,17 +172,29 @@ public void testSpiedList() {
     Assert.assertEquals(1, spiedList.size());
 }
 ```
+### Mockito methods
+Following methods are in this package : "import static org.mockito.Mockito" .
+assertEquals()
+when()
+thenReturn()
+verify()
 
 ### Testing Naming Conventions  
 Some add test, should, when prefixes.  
 I do no like adding the same post or prefixes to every method name.  
 It makes methods to find when searched.  
 
-I prefer "given_When_Then();" naming style.  
+MCA naming style "method_case_act()".  
 For example:
-"doubleMaxValueAsRadius_CalculateArea_ReturnAreaAsInfinity();"
+"calculateArea_DoubleMaxValueAsRadius_ReturnAreaAsInfinity();"
 "isAdult_AgeLessThan18_False();"
 
+SWI Naming style "should_When_Is()";
+For example:
+"shouldNotReturnUser_WhenParameter_ISNUll"
+
+**Note**
+I prefer MCA naming for unit tests and SWI naming for integration and mock tests.  
 
 ## Implementation
 Add following dependency to the pom.xml file:
@@ -208,7 +220,7 @@ To test this you can write following:
 First testing the happy path:
 
 ```java
-@Test
+    @Test
     void shouldConvertToLocalDate() throws ParseException {
 
         Date date = formatterDate.parse("05-10-1991");
