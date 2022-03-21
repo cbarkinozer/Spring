@@ -174,10 +174,11 @@ public void testSpiedList() {
 ```
 ### Mockito methods
 Following methods are in this package : "import static org.mockito.Mockito" .
-assertEquals()
-when()
-thenReturn()
-verify()
+**assertEquals()**: Asserts that two objects are equal.  
+**when()**: It enables stubbing methods. In simple terms, "When the XYZ() method is called, then return ABC."  
+**thenReturn()**: It specify what to return when a method is called.  
+**verify()**:  Checks if a certain method of a mock object has been called.  
+**doReturn()**:   It specify a return value on a spied object without making a side effect.  
 
 ### Testing Naming Conventions  
 Some add test, should, when prefixes.  
