@@ -39,12 +39,62 @@ After the release, maintenance (enhancing or fixing by changes) is done for the 
 Some of the most popular sdlc models: Waterfall, iterative, spiral, v-model, bigbang, agile, RAD.  
 
 **Waterfall**  
+Step by step applying software developement stages.  
+Suitable when:  
+- Requirements are well documented and fixed  
+- Product definition is stable  
+- Project is small  
+
+Advantages  
+Simple, easy apply, easy to manage, well documented, phases are completed at a time.   
+
+Disadvantages  
+- Working software is only produced at the end
+- High risk and uncertainty
+- Not suitable for complex and oop projects
+- Difficult to measure progress
+- Very static
+
 **Iterative**  
+Dividing the project to multiple smaller waterfalls.  
+
+Suitable when:
+- Requirements are clear
+- Major requirements defined but some changes might happen
+- Time constraint
+- Tech is still learned by developers
+
+Advantages  
+- Better risk analysis  
+- Less rigid  
+- Results are obtained earlier  
+
+Disadvantages
+- Increased resources  
+- Not very suitable for change  
+- More management attention  
+- Project success is dependent to the risk analysis
+
 **Spiral**  
+Combination of waterfall with iterative approach.  
+The time spent on the each iteration increases like a spiral from inside to outside.  
+Good for budget constraint, bigger team, bigger projects.  
+Usually preferred when customer is not sure the requirements.  
+Risk is medium to high.  
+
 **V-Model**  
+Testing of all kinds often, at the every stage.  
+Suitable for smaller and shorter, high risk projects.  
+
 **BigBang**  
+Time + resource -> work -> result
+There is no sdlc plan.  
+Good for academic, student projects for 1-2 developer projects.  
+Too risky, cost can be too high, project end is unknown.  
+
 **Agile**  
-**RAD**  
+
+**RAD(Rapid Application Developement)**  
 
 **Reference**  
 https://www.tutorialspoint.com/sdlc/sdlc_overview.htm
