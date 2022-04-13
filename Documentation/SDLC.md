@@ -104,11 +104,37 @@ Highly depends on customer directions.
 Minimum documentation, high individual dependency.  
 Shorter deadliness, race with time.  
 Higher risk of sustainability, maintainability and extensibility.  
+
 **RAD(Rapid Application Developement)**  
 Based on prototyping and iterative development with no specific planning involved.  
 Should be used only when a system can be modularized to be delivered in an incremental manner.  
 Inapplicable to cheaper projects as cost of Modelling and automated code generation is very high.  
 Requires domain experts.  
 
+**Kanban**  
+Kanban is a Japanese word means visual card.  
+Aims freeing resources and time.  
+
+Core concepts of Kanban
+- Visualize workflow(create columns that has names and works on that columns).
+- Limit work amount in progress(WIP).
+- Measure the lead time(average time to complete one item).  
+
+Benefits of Kanban  
+
+- Bottlenecks become clear.
+This leads people to collaborate and optimize the whole work chain rather than just their part.  
+
+- Useful where operations and support teams have a high rate of uncertainty and variability.  
+
+- Reduces inventory in the range of 25%-75%, hence reduce company costs.  
+
+- Reduce the wait time and ensure the speed.   
+
+- Overproduction is avoided.  
+
+
+
 **Reference**  
-https://www.tutorialspoint.com/sdlc/sdlc_overview.htm
+https://www.tutorialspoint.com/sdlc/sdlc_overview.htm   
+https://www.tutorialspoint.com/kanban/kanban_introduction.htm  
