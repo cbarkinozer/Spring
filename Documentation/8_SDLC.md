@@ -90,7 +90,13 @@ Suitable for smaller and shorter, high risk projects.
 Time + resource -> work -> result
 There is no sdlc plan.  
 Good for academic, student projects for 1-2 developer projects.  
-Too risky, cost can be too high, project end is unknown.  
+Too risky, cost can be too high, project end is unknown.   
+
+**RAD(Rapid Application Developement)**  
+Based on prototyping and iterative development with no specific planning involved.  
+Should be used only when a system can be modularized to be delivered in an incremental manner.  
+Inapplicable to cheaper projects as cost of Modelling and automated code generation is very high.  
+Requires domain experts.  
 
 **Agile**  
 Agile focus on process adaptability and customer satisfaction by rapid delivery of working software product.  
@@ -103,13 +109,13 @@ Suitable for fastly changing requirements.
 Highly depends on customer directions.  
 Minimum documentation, high individual dependency.  
 Shorter deadliness, race with time.  
-Higher risk of sustainability, maintainability and extensibility.  
+Higher risk of sustainability, maintainability and extensibility. 
 
-**RAD(Rapid Application Developement)**  
-Based on prototyping and iterative development with no specific planning involved.  
-Should be used only when a system can be modularized to be delivered in an incremental manner.  
-Inapplicable to cheaper projects as cost of Modelling and automated code generation is very high.  
-Requires domain experts.  
+**Agile Methodologies**
+Dynamic system developement methodology (DSDM), Extreme programming, test-driven developement, lean, kanban.  
+
+**Lean**:Reduces resources spent for any purpose other than creating value for the customer. It focuses on preserving value with less work.  
+**Extreme Programming**: Type of agile developement. Advocates frequent releases in short development cycles. 
 
 **Kanban**  
 Kanban is a Japanese word means visual card.  
@@ -120,7 +126,7 @@ Core concepts of Kanban
 - Limit work amount in progress(WIP).
 - Measure the lead time(average time to complete one item).  
 
-Benefits of Kanban  
+**Benefits of Kanban**  
 
 - Bottlenecks become clear.
 This leads people to collaborate and optimize the whole work chain rather than just their part.  
@@ -133,8 +139,18 @@ This leads people to collaborate and optimize the whole work chain rather than j
 
 - Overproduction is avoided.  
 
+**Scrum**  
+The most popular agile framework.  
+Focuses on how to manage tasks within a team-based development environment.  
+Scrum is relatively simple and uses iterative and incremental development model, with shorter duration of iterations.  
+It is a system that aims to improve production. Organizations perform Just-In-Time (JIT) to control their inventory expenses.  
+![image](https://user-images.githubusercontent.com/43732258/163327131-6b044da5-2f82-4789-83f5-2cd73f5716b7.png)
 
+**Sprint**  
+The core of the Scrum, a time-box of two weeks or one month during which product is created.  
+Sprints consist of the Sprint planning, daily scrums, the development work, the Sprint review, and the Sprint retrospective.  
 
 **Reference**  
 https://www.tutorialspoint.com/sdlc/sdlc_overview.htm   
 https://www.tutorialspoint.com/kanban/kanban_introduction.htm  
+https://www.tutorialspoint.com/scrum/scrum_overview.htm  
