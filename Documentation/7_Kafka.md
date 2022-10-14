@@ -1,19 +1,19 @@
-Kafka Fundamentals
+**Kafka Fundamentals** 
 Fundamentals of the Apache Kafka
 
-What is Apache Kafka?
+**What is Apache Kafka?** 
 Kafka is a fault-tolerant and horizontally scalable distributed streaming framework. [1]
 
-What is a distributed system?
+**What is a distributed system?** 
 A distributed system is one in which several computing resources collaborate towards a common goal. [1]
 Kafka is distributed in the sense that it stores, receives, and delivers messages across a network of nodes known as brokers.
 [1]
 
-What does horizontally scalable mean?
+**What does horizontally scalable mean?** 
 Horizontal scalability refers to the ability to enhance capacity by linking various computer resources so that they function as a single unit. [1]
 There is no downtime required to add a new computer resource, and there are no computing resource constraints. [1]
 
-What does fault tolerance mean?
+**What does fault tolerance mean?** 
 Nodes in Kafka can fail, and the system can make calibrated modifications and continue to function. However, the more fault-tolerant your system, the lower its performance. [1]
 
 **How Kafka works?**  
